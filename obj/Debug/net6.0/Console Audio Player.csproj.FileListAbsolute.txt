@@ -1,0 +1,50 @@
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\Console Audio Player.exe
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\Console Audio Player.deps.json
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\Console Audio Player.runtimeconfig.json
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\Console Audio Player.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\Console Audio Player.pdb
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\System.Drawing.Common.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\System.Windows.Extensions.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\AxInterop.WMPLib.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\Interop.WMPLib.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\obj\Debug\net6.0\Console Audio Player.csproj.AssemblyReference.cache
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\obj\Debug\net6.0\Console Audio Player.GeneratedMSBuildEditorConfig.editorconfig
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\obj\Debug\net6.0\Console Audio Player.AssemblyInfoInputs.cache
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\obj\Debug\net6.0\Console Audio Player.AssemblyInfo.cs
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\obj\Debug\net6.0\Console Audio Player.csproj.CoreCompileInputs.cache
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\obj\Debug\net6.0\Console Audio Player.csproj.CopyComplete
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\obj\Debug\net6.0\Console Audio Player.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\obj\Debug\net6.0\refint\Console Audio Player.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\obj\Debug\net6.0\Console Audio Player.pdb
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\obj\Debug\net6.0\Console Audio Player.genruntimeconfig.cache
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Console Audio Player\obj\Debug\net6.0\ref\Console Audio Player.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\Console Audio Player.exe
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\Console Audio Player.deps.json
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\Console Audio Player.runtimeconfig.json
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\Console Audio Player.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\Console Audio Player.pdb
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\System.Drawing.Common.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\System.Windows.Extensions.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\AxInterop.WMPLib.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\Interop.WMPLib.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\obj\Debug\net6.0\Console Audio Player.csproj.AssemblyReference.cache
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\obj\Debug\net6.0\Console Audio Player.GeneratedMSBuildEditorConfig.editorconfig
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\obj\Debug\net6.0\Console Audio Player.AssemblyInfoInputs.cache
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\obj\Debug\net6.0\Console Audio Player.AssemblyInfo.cs
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\obj\Debug\net6.0\Console Audio Player.csproj.CoreCompileInputs.cache
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\obj\Debug\net6.0\Console Audio Player.csproj.CopyComplete
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\obj\Debug\net6.0\Console Audio Player.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\obj\Debug\net6.0\refint\Console Audio Player.dll
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\obj\Debug\net6.0\Console Audio Player.pdb
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\obj\Debug\net6.0\Console Audio Player.genruntimeconfig.cache
+D:\3. PROJEKTY\Komunikacja-Czlowiek-Komputer\Projekt 1 - Console Audio Player\obj\Debug\net6.0\ref\Console Audio Player.dll
