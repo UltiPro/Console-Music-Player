@@ -5,7 +5,11 @@
     <RootNamespace>Console_Audio_Player</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="favicon.ico" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Windows.Extensions" Version="6.0.0" />
     <PackageReference Include="WMPLib" Version="1.0.0" />
