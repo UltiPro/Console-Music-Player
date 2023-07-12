@@ -10,7 +10,7 @@ class AudioPlayer
     public AudioPlayer()
     {
         WMP = new WindowsMediaPlayer();
-        volumePlayer = bufVolumePlayer = 5;
+        volumePlayer = bufVolumePlayer = 50;
         isMute = false;
     }
     public short VolumePlayer { get { return volumePlayer; } }
