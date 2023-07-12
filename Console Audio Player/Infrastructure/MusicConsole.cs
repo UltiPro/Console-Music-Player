@@ -14,7 +14,7 @@ class MusicConsole
     private char[,] console;
     private int[] consoleAnimation;
     private int currentFolderIdx, currentFileIdx;
-    private bool initTheards, nowPlaying;
+    private bool initThreads, nowPlaying, launchApp;
     private DirectoryFileManager DFM;
     private AudioPlayer AP;
     private Thread? threadTimer, threadAnimation, threadAnimation2;
@@ -22,8 +22,9 @@ class MusicConsole
     {
         currentFileIdx = 0;
         currentFolderIdx = 0;
-        initTheards = true;
+        initThreads = true;
         nowPlaying = false;
+        launchApp = false;
         console = new char[160, 40];
         consoleAnimation = new int[(console.GetLength(0) / 2) - 4];
         DFM = new DirectoryFileManager();
@@ -32,9 +33,9 @@ class MusicConsole
     public void Start()
     {
         InitMusicConsole();
-        bool start = true;
+        launchApp = true;
         ConsoleKeyInfo inputFromKeyboard;
-        while (start)
+        while (launchApp)
         {
             inputFromKeyboard = Console.ReadKey(true);
             switch (inputFromKeyboard.Key)
@@ -80,12 +81,12 @@ class MusicConsole
                     {
                         AP.Start(DFM.ArrayOfFiles[currentFileIdx]);
                         UpdateTrack(DFM.ArrayOfFiles[currentFileIdx]);
-                        if (threadTimer != null && threadAnimation != null && threadAnimation2 != null && initTheards)
+                        if (threadTimer != null && threadAnimation != null && threadAnimation2 != null && initThreads)
                         {
                             threadTimer.Start();
                             threadAnimation.Start();
                             threadAnimation2.Start();
-                            initTheards = false;
+                            initThreads = false;
                             nowPlaying = true;
                         }
                         else nowPlaying = true;
@@ -134,7 +135,7 @@ class MusicConsole
                 case ConsoleKey.I:
                     try
                     {
-                        Process.Start("notepad.exe", "Information.txt");
+                        Process.Start("notepad.exe", AppContext.BaseDirectory + "/Information.txt");
                     }
                     catch (Exception e)
                     {
@@ -142,10 +143,7 @@ class MusicConsole
                     }
                     break;
                 case ConsoleKey.Escape:
-                    if (threadTimer != null) threadTimer.Interrupt();
-                    if (threadAnimation != null) threadAnimation.Interrupt();
-                    if (threadAnimation2 != null) threadAnimation2.Interrupt();
-                    start = false;
+                    launchApp = false;
                     Console.Clear();
                     break;
             }
@@ -249,7 +247,7 @@ class MusicConsole
     {
         Random rnd = new Random();
         int rndNumber = rnd.Next(0, (Console.WindowHeight / 4) * 3 - 9);
-        while (true)
+        while (launchApp)
         {
             if (nowPlaying)
             {
@@ -275,7 +273,7 @@ class MusicConsole
             else
             {
                 UpdateAnimationPassive();
-                Thread.Sleep(1000);
+                Thread.Sleep(100);
             }
         }
     }
@@ -283,7 +281,7 @@ class MusicConsole
     {
         Random rnd = new Random();
         BoxClear((Console.WindowWidth / 4), ((Console.WindowHeight / 4) * 3) + 5, (Console.WindowWidth / 4) * 2, 2);
-        while (true)
+        while (launchApp)
         {
             if (nowPlaying)
             {
@@ -304,18 +302,18 @@ class MusicConsole
                 UpdateConsoleBlock((Console.WindowWidth / 4), ((Console.WindowHeight / 4) * 3) + 5, (Console.WindowWidth / 4) * 2, 2, null);
                 BoxClear((Console.WindowWidth / 4), ((Console.WindowHeight / 4) * 3) + 5, (Console.WindowWidth / 4) * 2, 2);
             }
-            Thread.Sleep(1000);
+            Thread.Sleep(100);
         }
     }
     private void UpdateTimer()
     {
-        while (true)
+        while (launchApp)
         {
             BoxClear((Console.WindowWidth / 4) + 1, ((Console.WindowHeight / 4) * 3) - 2, ((Console.WindowWidth / 4) * 2) - 2, 1);
             string outText = "<<< " + (AP.CurrentTrackDuration != "" ? AP.CurrentTrackDuration : "--:--") + " | " + AP.TrackDuration + " >>>";
             StringWriter(outText, (Console.WindowWidth / 2) - (outText.Length / 2), ((Console.WindowHeight / 4) * 3) - 2, ((Console.WindowWidth / 4) * 2) - 1, 1, false);
             UpdateConsoleBlock((Console.WindowWidth / 4) + 1, ((Console.WindowHeight / 4) * 3) - 2, ((Console.WindowWidth / 4) * 2) - 2, 1, null);
-            Thread.Sleep(1000);
+            Thread.Sleep(100);
             if (AP.TrackStatusStopped) nowPlaying = false;
         }
     }
@@ -452,10 +450,10 @@ class MusicConsole
         string textCopied = text;
         if (clearBox != null && clearBox == true) BoxClear(xPosition, yPosition, lengthOfBlock, heightOfBlock);
         int tempXPosition = xPosition, tempLengthOfBlock = lengthOfBlock;
-        if (heightOfBlock * lengthOfBlock < textCopied.Length) textCopied = "... " + textCopied.Substring(textCopied.Length - (heightOfBlock * lengthOfBlock) + 3);
+        if (heightOfBlock * lengthOfBlock < textCopied.Length) textCopied = "... " + textCopied.Substring(textCopied.Length - (heightOfBlock * lengthOfBlock) + 4);
         foreach (char c in textCopied)
         {
-            if (tempLengthOfBlock != 0)
+            if (tempLengthOfBlock > 0)
             {
                 console[tempXPosition, yPosition] = c;
                 tempLengthOfBlock--;
@@ -467,6 +465,7 @@ class MusicConsole
                 tempXPosition = xPosition;
                 yPosition++;
                 console[tempXPosition, yPosition] = c;
+                tempLengthOfBlock--;
                 tempXPosition++;
             }
         }
