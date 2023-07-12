@@ -8,7 +8,7 @@
                                                                                                                                 /\___/            
                                                                                                                                 \/__/             
 
-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------
 
 Welcome To "Console Music Player" by Patryk Wójtowicz
 
@@ -24,22 +24,24 @@ F1 -> Unmute
 F2 -> Volume Down
 F3 -> Volume Up
 F4 -> Mute
+
 F5 -> Pause
 F6 -> Skip Back
+
 F7 -> Resume
 F8 -> Skip Front
 I -> Infromation in THIS File
 Escape -> Turn Off Program
 
-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------
 
-Bugs: Report at GitHub https://github.com/UltiPro/ or at e-mail ultiprogames@gmail.com
+Report bugs at https://github.com/UltiPro/Console-Music-Player.
 
-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------
 
 MIT License
 
-Copyright (c) 2022 Patryk Wójtowicz
+Copyright (c) 2023 Patryk 'UltiPro' Wójtowicz
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
