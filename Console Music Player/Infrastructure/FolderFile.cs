@@ -75,12 +75,17 @@ class DirectoryFileManager
         }
         arrayOfFolders = tempOutPut.ToArray();
     }
-    public void Files()
+    private void Files()
     {
         string[] extensions = { "wav", "mp3" };
         var musicFiles = new DirectoryInfo(path).GetFiles("*.*").Where(file => extensions.Contains(System.IO.Path.GetExtension(file.FullName).TrimStart('.').ToLowerInvariant()));
         List<string> output = new List<string>();
         foreach (FileInfo musicFile in musicFiles) output.Add(musicFile.Name);
         arrayOfFiles = output.ToArray();
+    }
+    public void Refresh()
+    {
+        Folders();
+        Files();
     }
 }
