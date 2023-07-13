@@ -28,9 +28,11 @@ class AudioPlayer
         }
         WMP.controls.stop();
         short oldVolume = (short)WMP.settings.volume;
+        bool oldMute = WMP.settings.mute;
         WMP = new WindowsMediaPlayer();
         WMP.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(TrackEnded);
         WMP.settings.volume = oldVolume;
+        WMP.settings.mute = oldMute;
         WMP.URL = path;
         WMP.controls.play();
     }
