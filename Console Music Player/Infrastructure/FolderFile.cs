@@ -77,12 +77,10 @@ class DirectoryFileManager
     }
     private void Files()
     {
-        var tempWav = Directory.GetFiles(path, "*.wav");
-        var tempMp3 = Directory.GetFiles(path, "*.mp3");
-        string[] temp = new string[tempWav.Length + tempMp3.Length];
-        tempWav.CopyTo(temp, 0);
-        tempMp3.CopyTo(temp, tempWav.Length);
-        for (int i = 0; i < temp.Length; i++) temp[i] = temp[i].Remove(0, path.Length + 1);
-        arrayOfFiles = temp;
+        string[] extensions = { "wav", "mp3" };
+        var musicFiles = new DirectoryInfo(path).GetFiles("*.*").Where(file => extensions.Contains(System.IO.Path.GetExtension(file.FullName).TrimStart('.').ToLowerInvariant()));
+        List<string> output = new List<string>();
+        foreach (FileInfo musicFile in musicFiles) output.Add(musicFile.Name);
+        arrayOfFiles = output.ToArray();
     }
 }
