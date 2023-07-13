@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using LoggerTool;
 
 namespace ManageWindowTool;
 
@@ -16,13 +17,20 @@ class ManageWindow
     private static extern IntPtr GetConsoleWindow();
     public static void Start()
     {
-        IntPtr handle = GetConsoleWindow();
-        IntPtr sysMenu = GetSystemMenu(handle, false);
-        if (handle != IntPtr.Zero)
+        try
         {
-            DeleteMenu(sysMenu, SC_CLOSE, MF_BYCOMMAND);
-            DeleteMenu(sysMenu, SC_MAXIMIZE, MF_BYCOMMAND);
-            DeleteMenu(sysMenu, SC_SIZE, MF_BYCOMMAND);
+            IntPtr handle = GetConsoleWindow();
+            IntPtr sysMenu = GetSystemMenu(handle, false);
+            if (handle != IntPtr.Zero)
+            {
+                DeleteMenu(sysMenu, SC_CLOSE, MF_BYCOMMAND);
+                DeleteMenu(sysMenu, SC_MAXIMIZE, MF_BYCOMMAND);
+                DeleteMenu(sysMenu, SC_SIZE, MF_BYCOMMAND);
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.SaveLog(e.ToString());
         }
     }
 }
