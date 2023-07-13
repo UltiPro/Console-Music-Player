@@ -1,52 +1,57 @@
 using WMPLib;
+using MusicConsoleTool;
 
 namespace AudioPlayerTool;
 
 class AudioPlayer
 {
-    private WindowsMediaPlayer WMP;
-    private short volumePlayer, bufVolumePlayer;
-    private bool isMute;
-    public AudioPlayer()
+    private MusicConsole musicConsole;
+    public WindowsMediaPlayer WMP;
+    public AudioPlayer(MusicConsole musicConsole, short defaultVolume = 50)
     {
+        this.musicConsole = musicConsole;
         WMP = new WindowsMediaPlayer();
-        volumePlayer = bufVolumePlayer = 50;
-        isMute = false;
+        WMP.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(TrackEnded);
+        WMP.settings.volume = defaultVolume;
     }
-    public short VolumePlayer { get { return volumePlayer; } }
+    public short VolumePlayer { get { return (short)WMP.settings.volume; } }
     public string CurrentTrackDuration { get { return WMP.controls.currentPositionString; } }
     public string TrackDuration { get { return WMP.currentMedia.durationString; } }
     public bool TrackStatusStopped { get { return WMP.playState == WMPLib.WMPPlayState.wmppsStopped; } }
     public void Start(string path)
     {
-        Stop();
-        WMP.settings.volume = volumePlayer;
+        if (!File.Exists(path))
+        {
+            musicConsole.currentFileIdx = (musicConsole.currentFileIdx - 1) < 0 ? 0 : --musicConsole.currentFileIdx;
+            TrackEnded(8);
+            return;
+        }
+        WMP.controls.stop();
+        short oldVolume = (short)WMP.settings.volume;
+        WMP = new WindowsMediaPlayer();
+        WMP.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(TrackEnded);
+        WMP.settings.volume = oldVolume;
         WMP.URL = path;
         WMP.controls.play();
     }
     public void Pause() => WMP.controls.pause();
     public void Resume() => WMP.controls.play();
-    public void Stop() => WMP.controls.stop();
     public void ChangeVolume(short count)
     {
-        isMute = false;
-        volumePlayer += count;
-        WMP.settings.volume = volumePlayer;
+        WMP.settings.mute = false;
+        WMP.settings.volume += count;
     }
-    public void Mute()
+    public void MuteUnMute(bool value) => WMP.settings.mute = value;
+    public void SkipTrack(int count) => WMP.controls.currentPosition += count;
+    private void TrackEnded(int state)
     {
-        isMute = true;
-        bufVolumePlayer = volumePlayer;
-        volumePlayer = 0;
-        WMP.settings.volume = volumePlayer;
-    }
-    public void UnMute()
-    {
-        if (isMute)
+        if (state == (int)WMPPlayState.wmppsMediaEnded)
         {
-            volumePlayer = bufVolumePlayer;
-            WMP.settings.volume = volumePlayer;
+            musicConsole.DFM.Refresh();
+            musicConsole.currentFileIdx = (musicConsole.currentFileIdx + 1) < musicConsole.DFM.CountOfFiles ? ++musicConsole.currentFileIdx : 0;
+            musicConsole.UpdateFiles(musicConsole.currentFileIdx);
+            Start(musicConsole.DFM.ArrayOfFiles[musicConsole.currentFileIdx]);
+            musicConsole.UpdateTrack(musicConsole.DFM.ArrayOfFiles[musicConsole.currentFileIdx]);
         }
     }
-    public void SkipTrack(int count) => WMP.controls.currentPosition += count;
 }
