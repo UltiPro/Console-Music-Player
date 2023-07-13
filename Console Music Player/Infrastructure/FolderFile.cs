@@ -23,7 +23,8 @@ class DirectoryFileManager
     {
         try
         {
-            Directory.SetCurrentDirectory(path + "\\" + direction);
+            if (direction.Substring(direction.Length - 2, 2) == ":\\") Directory.SetCurrentDirectory(direction);
+            else Directory.SetCurrentDirectory(path + "\\" + direction);
             path = Directory.GetCurrentDirectory();
             Folders();
             Files();
@@ -65,7 +66,13 @@ class DirectoryFileManager
             returnDirectory = true;
             tempOutPut.Insert(0, "..");
         }
-        else returnDirectory = false;
+        else
+        {
+            returnDirectory = false;
+            List<string> drives = System.IO.Directory.GetLogicalDrives().ToList();
+            drives.Remove(Path.Substring(0, 3));
+            tempOutPut = drives.Concat(tempOutPut).ToList();
+        }
         arrayOfFolders = tempOutPut.ToArray();
     }
     private void Files()
