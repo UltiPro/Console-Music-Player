@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Linq;
 using DirectoryFileManagerTool;
 using AudioPlayerTool;
 using LoggerTool;
@@ -7,15 +8,18 @@ namespace MusicConsoleTool;
 
 class MusicConsole
 {
+    private int widthOfWindow, widthOfWindow3_4, widthOfWindow2_4, widthOfWindow1_4, widthOfWindow1_8;
+    private int heightOfWindow, heightOfWindow3_4, heightOfWindow1_4;
     private char[] walls = { '═', '║', '╔', '╗', '╚', '╝', '╠', '╣', '╦', '╩', '╬' };
     private char[] arrows = { '▲', '▼' };
     private char[] volumeDots = { '●', '○' };
     private char[] notes = { '♪', '♫' };
     private char[,] console;
     private int[] consoleAnimation;
-    private int currentFolderIdx, currentFileIdx;
+    public int currentFileIdx;
+    private int currentFolderIdx;
     private bool initThreads, nowPlaying, launchApp;
-    private DirectoryFileManager DFM;
+    public DirectoryFileManager DFM;
     private AudioPlayer AP;
     private Thread? threadTimer, threadAnimation, threadAnimation2;
     public MusicConsole()
@@ -28,7 +32,22 @@ class MusicConsole
         console = new char[160, 40];
         consoleAnimation = new int[(console.GetLength(0) / 2) - 4];
         DFM = new DirectoryFileManager();
-        AP = new AudioPlayer();
+        short tempVolume = 50;
+        try
+        {
+            using (StreamReader file = new(AppContext.BaseDirectory + "/settings"))
+            {
+                string? output = file.ReadLine();
+                if (!short.TryParse(output, out tempVolume)) throw new FormatException("Settings has invalid format of data.");
+                file.Close();
+            }
+        }
+        catch (Exception e)
+        {
+            tempVolume = 50;
+            Logger.SaveLog(e.ToString());
+        }
+        AP = new AudioPlayer(this, tempVolume);
     }
     public void Start()
     {
@@ -41,28 +60,28 @@ class MusicConsole
             switch (inputFromKeyboard.Key)
             {
                 case ConsoleKey.UpArrow:
-                    if (currentFolderIdx > 0 /* && blockChanging */)
+                    if (currentFolderIdx > 0)
                     {
                         currentFolderIdx--;
                         UpdateFolders(currentFolderIdx);
                     }
                     break;
                 case ConsoleKey.DownArrow:
-                    if (currentFolderIdx < DFM.CountOfFolders - 1 /*&& blockChanging*/)
+                    if (currentFolderIdx < DFM.CountOfFolders - 1)
                     {
                         currentFolderIdx++;
                         UpdateFolders(currentFolderIdx);
                     }
                     break;
                 case ConsoleKey.LeftArrow:
-                    if (currentFileIdx > 0 /*&& blockChanging*/)
+                    if (currentFileIdx > 0)
                     {
                         currentFileIdx--;
                         UpdateFiles(currentFileIdx);
                     }
                     break;
                 case ConsoleKey.RightArrow:
-                    if (currentFileIdx < DFM.CountOfFiles - 1 /*&& blockChanging*/)
+                    if (currentFileIdx < DFM.CountOfFiles - 1)
                     {
                         currentFileIdx++;
                         UpdateFiles(currentFileIdx);
@@ -90,6 +109,8 @@ class MusicConsole
                             nowPlaying = true;
                         }
                         else nowPlaying = true;
+                        DFM.Refresh();
+                        UpdateFiles(currentFileIdx);
                     }
                     catch (Exception e)
                     {
@@ -97,7 +118,7 @@ class MusicConsole
                     }
                     break;
                 case ConsoleKey.F1:
-                    AP.UnMute();
+                    AP.MuteUnMute(true);
                     UpdateVolume(AP.VolumePlayer);
                     break;
                 case ConsoleKey.F2:
@@ -115,22 +136,22 @@ class MusicConsole
                     }
                     break;
                 case ConsoleKey.F4:
-                    AP.Mute();
+                    AP.MuteUnMute(false);
                     UpdateVolume(AP.VolumePlayer);
                     break;
                 case ConsoleKey.F5:
-                    AP.Pause();
-                    nowPlaying = false;
+                    AP.SkipTrack(-10);
                     break;
                 case ConsoleKey.F6:
-                    AP.SkipTrack(-5);
+                    AP.Pause();
+                    nowPlaying = false;
                     break;
                 case ConsoleKey.F7:
                     AP.Resume();
                     nowPlaying = true;
                     break;
                 case ConsoleKey.F8:
-                    AP.SkipTrack(5);
+                    AP.SkipTrack(10);
                     break;
                 case ConsoleKey.I:
                     try
@@ -143,7 +164,20 @@ class MusicConsole
                     }
                     break;
                 case ConsoleKey.Escape:
+                    try
+                    {
+                        using (StreamWriter file = new(AppContext.BaseDirectory + "/settings", false))
+                        {
+                            file.WriteLine(AP.VolumePlayer.ToString());
+                            file.Close();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.SaveLog(e.ToString());
+                    }
                     launchApp = false;
+                    Thread.Sleep(500);
                     Console.Clear();
                     break;
             }
@@ -156,8 +190,23 @@ class MusicConsole
         Console.CursorVisible = false;
         Console.TreatControlCAsInput = true;
         Console.ForegroundColor = ConsoleColor.White;
-        Console.SetWindowSize(console.GetLength(0), console.GetLength(1));
-        Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
+        try
+        {
+            Console.SetWindowSize(console.GetLength(0), console.GetLength(1));
+            Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
+        }
+        catch (System.ArgumentOutOfRangeException e)
+        {
+            Logger.SaveLog(e.ToString());
+        }
+        widthOfWindow = Console.WindowWidth;
+        widthOfWindow1_8 = Console.WindowWidth / 8;
+        widthOfWindow1_4 = Console.WindowWidth / 4;
+        widthOfWindow2_4 = Console.WindowWidth / 2;
+        widthOfWindow3_4 = Console.WindowWidth / 4 * 3;
+        heightOfWindow = Console.WindowHeight;
+        heightOfWindow1_4 = Console.WindowHeight / 4;
+        heightOfWindow3_4 = Console.WindowHeight / 4 * 3;
         StartMenu();
         InitMusicConsoleDraw();
         threadTimer = new Thread(() => UpdateTimer());
@@ -188,13 +237,13 @@ class MusicConsole
         }
         catch (Exception e)
         {
-            for (int i = 0; i < (Console.WindowWidth / 2) - 10; i++) Console.Write(" ");
+            for (int i = 0; i < widthOfWindow2_4 - 10; i++) Console.Write(" ");
             Console.Write("Console Music Player");
             Logger.SaveLog(e.Message);
         }
         Console.Write("\n\n\n");
         string pressButton = "<<< Press Any Button To Continue >>>";
-        Console.SetCursorPosition((Console.WindowWidth / 2) - (pressButton.Length / 2), 24);
+        Console.SetCursorPosition(widthOfWindow2_4 - (pressButton.Length / 2), 24);
         Console.Write(pressButton);
         Console.ReadKey();
         Console.Clear();
@@ -208,67 +257,68 @@ class MusicConsole
     }
     private void DrawConsole()
     {
-        for (int i = 0; i < Console.WindowHeight - 1; i++)
+        for (int i = 0; i < heightOfWindow - 1; i++)
         {
-            for (int j = 0; j < Console.WindowWidth; j++) Console.Write(console[j, i]);
+            for (int j = 0; j < widthOfWindow; j++) Console.Write(console[j, i]);
         }
-        for (int i = 0; i < Console.WindowWidth - 1; i++) Console.Write(console[i, 39]);
-        Console.SetCursorPosition(Console.WindowWidth - 2, Console.WindowHeight - 1);
+        for (int i = 0; i < widthOfWindow - 1; i++) Console.Write(console[i, 39]);
+        Console.SetCursorPosition(widthOfWindow - 2, heightOfWindow - 1);
         Console.Write(walls[5]);
-        Console.MoveBufferArea(Console.WindowWidth - 2, Console.WindowHeight - 1, 1, 1, Console.WindowWidth - 1, Console.WindowHeight - 1, walls[0], Console.ForegroundColor, Console.BackgroundColor);
+        Console.MoveBufferArea(widthOfWindow - 2, heightOfWindow - 1, 1, 1, widthOfWindow - 1, heightOfWindow - 1, walls[0], Console.ForegroundColor, Console.BackgroundColor);
     }
     private void UpdatePath()
     {
         string newPath = DFM.Path;
         if (!(newPath[newPath.Length - 1] == '\\')) newPath += "\\";
-        StringWriter(newPath, 1, 3, (Console.WindowWidth / 4) - 2, 3, true);
-        UpdateConsoleBlock(1, 3, (Console.WindowWidth / 4) - 2, 3, null);
+        StringWriter(newPath, 1, 3, widthOfWindow1_4 - 2, 3, true);
+        UpdateConsoleBlock(1, 3, widthOfWindow1_4 - 2, 3, null);
     }
     private void UpdateFolders(int indexOfSelected)
     {
-        ListWriter(DFM.ArrayOfFolders, 1, 9, (Console.WindowWidth / 4) - 2, ((Console.WindowHeight / 4) * 3) - 10, true);
-        UpdateConsoleBlock(1, 9, (Console.WindowWidth / 4) - 2, ((Console.WindowHeight / 4) * 3) - 10, indexOfSelected);
+        int skipFolders = indexOfSelected / ((heightOfWindow3_4) - 12);
+        ListWriter(DFM.ArrayOfFolders.Skip(skipFolders * ((heightOfWindow3_4) - 12)).Take(((heightOfWindow3_4) - 12)).ToArray(), 1, 9, widthOfWindow1_4 - 2, (heightOfWindow3_4) - 10, true);
+        UpdateConsoleBlock(1, 9, widthOfWindow1_4 - 2, (heightOfWindow3_4) - 10, (indexOfSelected % ((heightOfWindow3_4) - 12)));
     }
-    private void UpdateTrack(string trackToDisplay)
+    public void UpdateTrack(string trackToDisplay)
     {
         trackToDisplay = trackToDisplay.Remove(trackToDisplay.Length - 4);
-        BoxClear((Console.WindowWidth / 4) + 1, 1, ((Console.WindowWidth / 4) * 2) - 1, 1);
-        StringWriter(trackToDisplay, (Console.WindowWidth / 2) - (trackToDisplay.Length / 2), 1, ((Console.WindowWidth / 4) * 2) - 1, 1, false);
-        UpdateConsoleBlock((Console.WindowWidth / 4), 1, ((Console.WindowWidth / 4) * 2) - 1, 1, null);
+        if (trackToDisplay.Length > widthOfWindow1_4 * 2 - 3) trackToDisplay = trackToDisplay.Substring(0, widthOfWindow1_4 * 2 - 8) + " ...";
+        BoxClear(widthOfWindow1_4 + 1, 1, (widthOfWindow1_4 * 2) - 1, 1);
+        StringWriter(trackToDisplay, widthOfWindow2_4 - (trackToDisplay.Length / 2), 1, (widthOfWindow1_4 * 2) - 1, 1, false);
+        UpdateConsoleBlock(widthOfWindow1_4, 1, (widthOfWindow1_4 * 2) - 1, 1, null);
     }
     private void UpdateAnimationPassive()
     {
-        BoxClear((Console.WindowWidth / 4) + 1, 3, (Console.WindowWidth / 4) * 2 - 2, (Console.WindowHeight / 4) * 3 - 3);
+        BoxClear(widthOfWindow1_4 + 1, 3, widthOfWindow1_4 * 2 - 2, heightOfWindow3_4 - 3);
         string infoText = "PAUSED: Resume Or Select New Track";
-        StringWriter(infoText, (Console.WindowWidth / 2) - (infoText.Length / 2), (Console.WindowHeight / 4 * 3) / 2, (Console.WindowWidth / 2) - 2, 1, false);
-        UpdateConsoleBlock((Console.WindowWidth / 4) + 1, 0, (Console.WindowWidth / 4) * 2 - 2, (Console.WindowHeight / 4) * 3 - 3, null);
+        StringWriter(infoText, widthOfWindow2_4 - (infoText.Length / 2), heightOfWindow3_4 / 2, widthOfWindow2_4 - 2, 1, false);
+        UpdateConsoleBlock(widthOfWindow1_4 + 1, 0, widthOfWindow1_4 * 2 - 2, heightOfWindow3_4 - 3, null);
     }
     private void UpdateAnimation()
     {
         Random rnd = new Random();
-        int rndNumber = rnd.Next(0, (Console.WindowHeight / 4) * 3 - 9);
+        int rndNumber = rnd.Next(0, heightOfWindow3_4 - 9);
         while (launchApp)
         {
             if (nowPlaying)
             {
-
                 for (int i = 0; i < consoleAnimation.Length; i++)
                 {
                     consoleAnimation[i] = rndNumber;
-                    rndNumber = rnd.Next(0, (Console.WindowHeight / 4) * 3 - 9);
+                    rndNumber = rnd.Next(0, heightOfWindow3_4 - 9);
                 }
                 int z = 0;
-                for (int i = (Console.WindowWidth / 4) + 2; i < (Console.WindowWidth / 4) + 2 + (Console.WindowWidth / 4) * 2 - 4; i++)
+                for (int i = widthOfWindow1_4 + 2; i < widthOfWindow1_4 + 2 + widthOfWindow1_4 * 2 - 4; i++)
                 {
-                    for (int j = (Console.WindowHeight / 4) * 3 - 4; j > 5; j--)
+                    for (int j = heightOfWindow3_4 - 4; j > 5; j--)
                     {
                         if (j > 8 + consoleAnimation[z]) console[i, j] = volumeDots[0];
                         else console[i, j] = ' ';
                     }
                     z++;
                 }
-                UpdateConsoleBlock((Console.WindowWidth / 4) + 2, 6, (Console.WindowWidth / 4) * 2 - 4, (Console.WindowHeight / 4) * 3 - 9, null);
-                Thread.Sleep(500);
+                UpdateConsoleBlock(widthOfWindow1_4 + 2, 6, widthOfWindow1_4 * 2 - 4, heightOfWindow3_4 - 9, null);
+                Thread.Sleep(100);
             }
             else
             {
@@ -280,27 +330,27 @@ class MusicConsole
     private void UpdateAnimation2()
     {
         Random rnd = new Random();
-        BoxClear((Console.WindowWidth / 4), ((Console.WindowHeight / 4) * 3) + 5, (Console.WindowWidth / 4) * 2, 2);
+        BoxClear(widthOfWindow1_4, (heightOfWindow3_4) + 5, widthOfWindow1_4 * 2, 2);
         while (launchApp)
         {
             if (nowPlaying)
             {
-                int col = rnd.Next(0, 10) + (Console.WindowWidth / 4) + 1;
-                int row = ((Console.WindowHeight / 4) * 3) + 5;
-                while (col <= (Console.WindowWidth / 4 * 3) - 2)
+                int col = rnd.Next(0, 10) + widthOfWindow1_4 + 1;
+                int row = (heightOfWindow3_4) + 5;
+                while (col <= widthOfWindow3_4 - 2)
                 {
                     console[col, row] = notes[col % 2];
                     col += rnd.Next(0, 10);
                 }
-                col = rnd.Next(0, 10) + (Console.WindowWidth / 4) + 1;
+                col = rnd.Next(0, 10) + widthOfWindow1_4 + 1;
                 row++;
-                while (col <= (Console.WindowWidth / 4 * 3) - 2)
+                while (col <= widthOfWindow3_4 - 2)
                 {
                     console[col, row] = notes[col % 2];
                     col += rnd.Next(0, 10);
                 }
-                UpdateConsoleBlock((Console.WindowWidth / 4), ((Console.WindowHeight / 4) * 3) + 5, (Console.WindowWidth / 4) * 2, 2, null);
-                BoxClear((Console.WindowWidth / 4), ((Console.WindowHeight / 4) * 3) + 5, (Console.WindowWidth / 4) * 2, 2);
+                UpdateConsoleBlock(widthOfWindow1_4, (heightOfWindow3_4) + 5, widthOfWindow1_4 * 2, 2, null);
+                BoxClear(widthOfWindow1_4, (heightOfWindow3_4) + 5, widthOfWindow1_4 * 2, 2);
             }
             Thread.Sleep(100);
         }
@@ -309,27 +359,34 @@ class MusicConsole
     {
         while (launchApp)
         {
-            BoxClear((Console.WindowWidth / 4) + 1, ((Console.WindowHeight / 4) * 3) - 2, ((Console.WindowWidth / 4) * 2) - 2, 1);
-            string outText = "<<< " + (AP.CurrentTrackDuration != "" ? AP.CurrentTrackDuration : "--:--") + " | " + AP.TrackDuration + " >>>";
-            StringWriter(outText, (Console.WindowWidth / 2) - (outText.Length / 2), ((Console.WindowHeight / 4) * 3) - 2, ((Console.WindowWidth / 4) * 2) - 1, 1, false);
-            UpdateConsoleBlock((Console.WindowWidth / 4) + 1, ((Console.WindowHeight / 4) * 3) - 2, ((Console.WindowWidth / 4) * 2) - 2, 1, null);
-            Thread.Sleep(100);
-            if (AP.TrackStatusStopped) nowPlaying = false;
+            lock (AP.WMP) // czy git?
+            {
+                BoxClear(widthOfWindow1_4 + 1, (heightOfWindow3_4) - 2, (widthOfWindow1_4 * 2) - 2, 1);
+                string outText = "<<< " + (AP.CurrentTrackDuration != "" ? AP.CurrentTrackDuration : "--:--") + " | " + AP.TrackDuration + " >>>";
+                StringWriter(outText, widthOfWindow2_4 - (outText.Length / 2), (heightOfWindow3_4) - 2, (widthOfWindow1_4 * 2) - 1, 1, false);
+                UpdateConsoleBlock(widthOfWindow1_4 + 1, (heightOfWindow3_4) - 2, (widthOfWindow1_4 * 2) - 2, 1, null);
+                Thread.Sleep(100);
+            }
         }
     }
-    private void UpdateFiles(int indexOfSelected)
+    public void UpdateFiles(int indexOfSelected)
     {
-        ListWriter(DFM.ArrayOfFiles, ((Console.WindowWidth / 4) * 3) + 1, 3, (Console.WindowWidth / 4) - 2, ((Console.WindowHeight / 4) * 3) - 4, false);
-        UpdateConsoleBlock(((Console.WindowWidth / 4) * 3) + 1, 3, (Console.WindowWidth / 4) - 2, ((Console.WindowHeight / 4) * 3) - 4, indexOfSelected);
+        int skipFiles = indexOfSelected / ((heightOfWindow3_4) - 6);
+        ListWriter(DFM.ArrayOfFiles.Skip(skipFiles * ((heightOfWindow3_4) - 6)).Take(((heightOfWindow3_4) - 6)).ToArray(), (widthOfWindow1_4 * 3) + 1, 3, widthOfWindow1_4 - 2, (heightOfWindow3_4) - 4, false);
+        UpdateConsoleBlock((widthOfWindow1_4 * 3) + 1, 3, widthOfWindow1_4 - 2, (heightOfWindow3_4) - 4, (indexOfSelected % ((heightOfWindow3_4) - 6)));
     }
     private void UpdateVolume(int currentVolume)
     {
         string volumeDisplay = " Value: [";
-        for (int i = 0; i < currentVolume / 10; i++) volumeDisplay += volumeDots[0] + " ";
-        for (int i = 0; i < 10 - (currentVolume / 10); i++) volumeDisplay += volumeDots[1] + " ";
-        volumeDisplay = volumeDisplay.Remove(volumeDisplay.Length - 1) + "]  " + currentVolume + " %";
-        StringWriter(volumeDisplay, ((Console.WindowWidth / 4) * 3) + 1, ((Console.WindowHeight / 4) * 3) + 3, (Console.WindowWidth / 4) - 2, 1, true);
-        UpdateConsoleBlock(((Console.WindowWidth / 4) * 3) + 1, ((Console.WindowHeight / 4) * 3) + 3, (Console.WindowWidth / 4) - 2, 1, null);
+        if (AP.MutePlayer) volumeDisplay += " Muted  ";
+        else
+        {
+            for (int i = 0; i < currentVolume / 10; i++) volumeDisplay += volumeDots[0] + " ";
+            for (int i = 0; i < 10 - (currentVolume / 10); i++) volumeDisplay += volumeDots[1] + " ";
+        }
+        volumeDisplay = volumeDisplay.Remove(volumeDisplay.Length - 1) + "]  " + (AP.MutePlayer ? 0 : currentVolume) + " %";
+        StringWriter(volumeDisplay, (widthOfWindow1_4 * 3) + 1, (heightOfWindow3_4) + 3, widthOfWindow1_4 - 2, 1, true);
+        UpdateConsoleBlock((widthOfWindow1_4 * 3) + 1, (heightOfWindow3_4) + 3, widthOfWindow1_4 - 2, 1, null);
     }
     private void UpdateConsoleBlock(int xPosition, int yPosition, int lengthOfBlock, int heightOfBlock, int? selectedItem)
     {
@@ -346,56 +403,59 @@ class MusicConsole
                     }
                     Console.SetCursorPosition(j, i);
                     Console.Write(console[j, i]);
-                    Console.BackgroundColor = ConsoleColor.Black;
-                    Console.ForegroundColor = ConsoleColor.White;
+                    if (selectedItem != null)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
                 }
             }
         }
     }
     private void DrawBaseConsole()
     {
-        FrameDrawer(0, 0, (Console.WindowWidth / 4) - 1, ((Console.WindowHeight / 4) * 3) - 1);
-        FrameDrawer((Console.WindowWidth / 4), 0, ((Console.WindowWidth / 4) * 2) - 1, ((Console.WindowHeight / 4) * 3) - 1);
-        FrameDrawer(((Console.WindowWidth / 4) * 3), 0, (Console.WindowWidth / 4) - 1, ((Console.WindowHeight / 4) * 3) - 1);
-        FrameDrawer(0, ((Console.WindowHeight / 4) * 3), Console.WindowWidth - 1, (Console.WindowHeight / 4) - 1);
-        WallDrawer((Console.WindowWidth / 4) - 1, ((Console.WindowHeight / 4) * 3), (Console.WindowHeight / 4) - 1);
-        WallDrawer(((Console.WindowWidth / 4) * 3), ((Console.WindowHeight / 4) * 3), (Console.WindowHeight / 4) - 1);
-        LineDrawer(0, 2, (Console.WindowWidth / 4) - 1);
-        LineDrawer(0, 6, (Console.WindowWidth / 4) - 1);
-        LineDrawer(0, 8, (Console.WindowWidth / 4) - 1);
-        LineDrawer((Console.WindowWidth / 4), 2, ((Console.WindowWidth / 4) * 2) - 1);
-        LineDrawer((Console.WindowWidth / 4), ((Console.WindowHeight / 4) * 3) - 3, ((Console.WindowWidth / 4) * 2) - 1);
-        LineDrawer(((Console.WindowWidth / 4) * 3), 2, (Console.WindowWidth / 4) - 1);
-        LineDrawer(0, ((Console.WindowHeight / 4) * 3) + 2, (Console.WindowWidth / 4) - 1);
-        LineDrawer(((Console.WindowWidth / 4) * 3), ((Console.WindowHeight / 4) * 3) + 2, (Console.WindowWidth / 4) - 1);
-        LineDrawer(((Console.WindowWidth / 4) * 3), ((Console.WindowHeight / 4) * 3) + 4, (Console.WindowWidth / 4) - 1);
-        LineDrawer((Console.WindowWidth / 4) - 1, ((Console.WindowHeight / 4) * 3) + 7, (Console.WindowWidth / 2) + 1);
-        WallDrawer((Console.WindowWidth / 2) - 1, ((Console.WindowHeight / 4) * 3) + 7, 2);
-        LineDrawerConnected((Console.WindowWidth / 4) - 1, ((Console.WindowHeight / 4) * 3) + 2, (Console.WindowWidth / 2) + 1);
-        LineDrawerRightConnected((Console.WindowWidth / 4) - 1, ((Console.WindowHeight / 4) * 3) + 4, (Console.WindowWidth / 2) + 1);
-        StringWriter("PATH", ((Console.WindowWidth / 4) / 2) - 2, 1, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("OTHER LOCATIONS", ((Console.WindowWidth / 4) / 2) - 8, 7, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("Choose first track...", (Console.WindowWidth / 2) - 11, 1, ((Console.WindowWidth / 4) * 2) - 1, 1, false);
-        StringWriter("Choose first track...", (Console.WindowWidth / 2) - 11, ((Console.WindowHeight / 4) * 3) - 2, ((Console.WindowWidth / 4) * 2) - 1, 1, false);
-        StringWriter("FILES", (Console.WindowWidth - (Console.WindowWidth / 8)) - 3, 1, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("FOLDER & FILE CONTROLS", ((Console.WindowWidth / 4) / 2) - 11, ((Console.WindowHeight / 4) * 3) + 1, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("Arrow Up    | Folder Up", 2, ((Console.WindowHeight / 4) * 3) + 3, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("Arrow Down  | Folder Down", 2, ((Console.WindowHeight / 4) * 3) + 4, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("Arrow Left  | File Up", 2, ((Console.WindowHeight / 4) * 3) + 5, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("Arrow Right | File Down", 2, ((Console.WindowHeight / 4) * 3) + 6, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("Enter       | Choose Folder", 2, ((Console.WindowHeight / 4) * 3) + 7, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("Space       | Choose File", 2, ((Console.WindowHeight / 4) * 3) + 8, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("TRACK CONTROLS", (Console.WindowWidth / 2) - 7, ((Console.WindowHeight / 4) * 3) + 1, ((Console.WindowWidth / 4) * 2) - 1, 1, false);
-        StringWriter("(F5) Pause | (F6) Skip Back | (F7) Resume | (F8) Skip Front", (Console.WindowWidth / 2) - 29, ((Console.WindowHeight / 4) * 3) + 3, ((Console.WindowWidth / 4) * 2) - 1, 1, false);
-        StringWriter("♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪", (Console.WindowWidth / 4), ((Console.WindowHeight / 4) * 3) + 5, ((Console.WindowWidth / 4) * 2), 1, false);
-        StringWriter("♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫", (Console.WindowWidth / 4), ((Console.WindowHeight / 4) * 3) + 6, ((Console.WindowWidth / 4) * 2), 1, false);
-        StringWriter("(I) More Information", (Console.WindowWidth / 4) + (Console.WindowWidth / 8) - 10, ((Console.WindowHeight / 4) * 3) + 8, (Console.WindowWidth / 4), 1, false);
-        StringWriter("(ESC) Turn Off", (Console.WindowWidth / 2) + (Console.WindowWidth / 8) - 7, ((Console.WindowHeight / 4) * 3) + 8, (Console.WindowWidth / 4), 1, false);
-        StringWriter("VOLUME", (Console.WindowWidth - (Console.WindowWidth / 8)) - 3, ((Console.WindowHeight / 4) * 3) + 1, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("(F1) Unmute", ((Console.WindowWidth / 4) * 3) + 2, ((Console.WindowHeight / 4) * 3) + 5, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("(F2) Volume Down", ((Console.WindowWidth / 4) * 3) + 2, ((Console.WindowHeight / 4) * 3) + 6, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("(F3) Volume Up", ((Console.WindowWidth / 4) * 3) + 2, ((Console.WindowHeight / 4) * 3) + 7, (Console.WindowWidth / 4) - 2, 1, false);
-        StringWriter("(F4) Mute", ((Console.WindowWidth / 4) * 3) + 2, ((Console.WindowHeight / 4) * 3) + 8, (Console.WindowWidth / 4) - 2, 1, false);
+        FrameDrawer(0, 0, widthOfWindow1_4 - 1, (heightOfWindow3_4) - 1);
+        FrameDrawer(widthOfWindow1_4, 0, (widthOfWindow1_4 * 2) - 1, (heightOfWindow3_4) - 1);
+        FrameDrawer((widthOfWindow1_4 * 3), 0, widthOfWindow1_4 - 1, (heightOfWindow3_4) - 1);
+        FrameDrawer(0, (heightOfWindow3_4), widthOfWindow - 1, heightOfWindow1_4 - 1);
+        WallDrawer(widthOfWindow1_4 - 1, (heightOfWindow3_4), heightOfWindow1_4 - 1);
+        WallDrawer((widthOfWindow1_4 * 3), (heightOfWindow3_4), heightOfWindow1_4 - 1);
+        LineDrawer(0, 2, widthOfWindow1_4 - 1);
+        LineDrawer(0, 6, widthOfWindow1_4 - 1);
+        LineDrawer(0, 8, widthOfWindow1_4 - 1);
+        LineDrawer(widthOfWindow1_4, 2, (widthOfWindow1_4 * 2) - 1);
+        LineDrawer(widthOfWindow1_4, (heightOfWindow3_4) - 3, (widthOfWindow1_4 * 2) - 1);
+        LineDrawer((widthOfWindow1_4 * 3), 2, widthOfWindow1_4 - 1);
+        LineDrawer(0, (heightOfWindow3_4) + 2, widthOfWindow1_4 - 1);
+        LineDrawer((widthOfWindow1_4 * 3), (heightOfWindow3_4) + 2, widthOfWindow1_4 - 1);
+        LineDrawer((widthOfWindow1_4 * 3), (heightOfWindow3_4) + 4, widthOfWindow1_4 - 1);
+        LineDrawer(widthOfWindow1_4 - 1, (heightOfWindow3_4) + 7, widthOfWindow2_4 + 1);
+        WallDrawer(widthOfWindow2_4 - 1, (heightOfWindow3_4) + 7, 2);
+        LineDrawerConnected(widthOfWindow1_4 - 1, (heightOfWindow3_4) + 2, widthOfWindow2_4 + 1);
+        LineDrawerRightConnected(widthOfWindow1_4 - 1, (heightOfWindow3_4) + 4, widthOfWindow2_4 + 1);
+        StringWriter("PATH", (widthOfWindow1_4 / 2) - 2, 1, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("OTHER LOCATIONS", (widthOfWindow1_4 / 2) - 8, 7, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("Choose first track...", widthOfWindow2_4 - 11, 1, (widthOfWindow1_4 * 2) - 1, 1, false);
+        StringWriter("Choose first track...", widthOfWindow2_4 - 11, (heightOfWindow3_4) - 2, (widthOfWindow1_4 * 2) - 1, 1, false);
+        StringWriter("FILES", (widthOfWindow - widthOfWindow1_8) - 3, 1, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("FOLDER & FILE CONTROLS", (widthOfWindow1_4 / 2) - 11, (heightOfWindow3_4) + 1, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("Arrow Up    | Folder Up", 2, (heightOfWindow3_4) + 3, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("Arrow Down  | Folder Down", 2, (heightOfWindow3_4) + 4, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("Arrow Left  | File Up", 2, (heightOfWindow3_4) + 5, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("Arrow Right | File Down", 2, (heightOfWindow3_4) + 6, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("Enter       | Choose Folder", 2, (heightOfWindow3_4) + 7, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("Space       | Choose File", 2, (heightOfWindow3_4) + 8, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("TRACK CONTROLS", widthOfWindow2_4 - 7, (heightOfWindow3_4) + 1, (widthOfWindow1_4 * 2) - 1, 1, false);
+        StringWriter("(F5) Previous | (F6) Back | (F7) Pause Play | (F8) Forwad | (F9) Next", widthOfWindow2_4 - 35, (heightOfWindow3_4) + 3, (widthOfWindow1_4 * 2) - 1, 1, false);
+        StringWriter("♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪♪", widthOfWindow1_4, (heightOfWindow3_4) + 5, (widthOfWindow1_4 * 2), 1, false);
+        StringWriter("♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫♫", widthOfWindow1_4, (heightOfWindow3_4) + 6, (widthOfWindow1_4 * 2), 1, false);
+        StringWriter("(I) More Information", widthOfWindow1_4 + widthOfWindow1_8 - 10, (heightOfWindow3_4) + 8, widthOfWindow1_4, 1, false);
+        StringWriter("(ESC) Turn Off", widthOfWindow2_4 + widthOfWindow1_8 - 7, (heightOfWindow3_4) + 8, widthOfWindow1_4, 1, false);
+        StringWriter("VOLUME", (widthOfWindow - widthOfWindow1_8) - 3, (heightOfWindow3_4) + 1, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("(F1) Mute", (widthOfWindow1_4 * 3) + 2, (heightOfWindow3_4) + 5, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("(F2) Volume Down", (widthOfWindow1_4 * 3) + 2, (heightOfWindow3_4) + 6, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("(F3) Volume Up", (widthOfWindow1_4 * 3) + 2, (heightOfWindow3_4) + 7, widthOfWindow1_4 - 2, 1, false);
+        StringWriter("(F4) Unmute", (widthOfWindow1_4 * 3) + 2, (heightOfWindow3_4) + 8, widthOfWindow1_4 - 2, 1, false);
     }
     private void BoxClear(int xPosition, int yPosition, int lengthOfBlock, int heightOfBlock)
     {
