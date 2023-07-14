@@ -31,6 +31,10 @@ class DirectoryFileManager
         }
         catch (Exception e)
         {
+            Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+            path = Directory.GetCurrentDirectory();
+            Folders();
+            Files();
             Logger.SaveLog(e.Message);
         }
     }
