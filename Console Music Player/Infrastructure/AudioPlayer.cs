@@ -15,9 +15,9 @@ class AudioPlayer
         WMP.settings.volume = defaultVolume;
     }
     public short VolumePlayer { get { return (short)WMP.settings.volume; } }
+    public bool MutePlayer { get { return WMP.settings.mute; } }
     public string CurrentTrackDuration { get { return WMP.controls.currentPositionString; } }
     public string TrackDuration { get { return WMP.currentMedia.durationString; } }
-    public bool TrackStatusStopped { get { return WMP.playState == WMPLib.WMPPlayState.wmppsStopped; } }
     public void Start(string path)
     {
         if (!File.Exists(path))
