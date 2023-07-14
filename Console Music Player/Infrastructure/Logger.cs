@@ -1,6 +1,6 @@
 namespace LoggerTool;
 
-public class Logger
+class Logger
 {
     public static async void SaveLog(string info)
     {
