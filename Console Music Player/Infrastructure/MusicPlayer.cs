@@ -6,7 +6,7 @@ namespace MusicPlayerTool;
 class MusicPlayer
 {
     private MusicConsole musicConsole;
-    public WindowsMediaPlayer WMP;
+    private WindowsMediaPlayer WMP;
     public MusicPlayer(MusicConsole musicConsole, short defaultVolume = 50)
     {
         this.musicConsole = musicConsole;
@@ -53,7 +53,7 @@ class MusicPlayer
             musicConsole.currentFileIdx = (musicConsole.currentFileIdx + 1) < musicConsole.DFM.CountOfFiles ? ++musicConsole.currentFileIdx : 0;
             musicConsole.UpdateFiles();
             Start(musicConsole.DFM.ArrayOfFiles[musicConsole.currentFileIdx]);
-            musicConsole.UpdateTrack(musicConsole.DFM.ArrayOfFiles[musicConsole.currentFileIdx]);
+            musicConsole.UpdateTrack();
         }
     }
 }
