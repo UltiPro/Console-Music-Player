@@ -1,13 +1,13 @@
 using WMPLib;
 using MusicConsoleTool;
 
-namespace AudioPlayerTool;
+namespace MusicPlayerTool;
 
-class AudioPlayer
+class MusicPlayer
 {
     private MusicConsole musicConsole;
     public WindowsMediaPlayer WMP;
-    public AudioPlayer(MusicConsole musicConsole, short defaultVolume = 50)
+    public MusicPlayer(MusicConsole musicConsole, short defaultVolume = 50)
     {
         this.musicConsole = musicConsole;
         WMP = new WindowsMediaPlayer();
@@ -51,7 +51,7 @@ class AudioPlayer
         {
             musicConsole.DFM.Refresh();
             musicConsole.currentFileIdx = (musicConsole.currentFileIdx + 1) < musicConsole.DFM.CountOfFiles ? ++musicConsole.currentFileIdx : 0;
-            musicConsole.UpdateFiles(musicConsole.currentFileIdx);
+            musicConsole.UpdateFiles();
             Start(musicConsole.DFM.ArrayOfFiles[musicConsole.currentFileIdx]);
             musicConsole.UpdateTrack(musicConsole.DFM.ArrayOfFiles[musicConsole.currentFileIdx]);
         }
