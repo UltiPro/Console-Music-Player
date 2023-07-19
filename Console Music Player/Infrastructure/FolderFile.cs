@@ -7,9 +7,18 @@ class DirectoryFileManager
     private string path;
     private string[]? arrayOfFolders, arrayOfFiles;
     private bool returnDirectory;
-    public DirectoryFileManager()
+    public DirectoryFileManager(string path)
     {
-        path = Directory.GetCurrentDirectory();
+        try
+        {
+            Directory.SetCurrentDirectory(path);
+        }
+        catch (Exception e)
+        {
+            Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+            Logger.SaveLog(e.Message);
+        }
+        this.path = Directory.GetCurrentDirectory();
         Folders();
         Files();
     }
