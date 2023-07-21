@@ -6,8 +6,7 @@ class DirectoryFileManager
 {
     private string path;
     private string[]? arrayOfFolders, arrayOfFiles;
-    private bool returnDirectory;
-    public DirectoryFileManager(string path)
+    public DirectoryFileManager(string path = "")
     {
         try
         {
@@ -23,16 +22,16 @@ class DirectoryFileManager
         Files();
     }
     public string Path => path;
-    public string[] ArrayOfFolders { get { return arrayOfFolders != null ? arrayOfFolders : new string[0]; } }
-    public string[] ArrayOfFiles { get { return arrayOfFiles != null ? arrayOfFiles : new string[0]; } }
-    public int CountOfFolders { get { return arrayOfFolders != null ? arrayOfFolders.Length : 0; } }
-    public int CountOfFiles { get { return arrayOfFiles != null ? arrayOfFiles.Length : 0; } }
-    public bool ReturnDirectory { get { return returnDirectory; } }
+    public string[] ArrayOfFolders => arrayOfFolders != null ? arrayOfFolders : new string[0];
+    public string[] ArrayOfFiles => arrayOfFiles != null ? arrayOfFiles : new string[0];
+    public int CountOfFolders => arrayOfFolders != null ? arrayOfFolders.Length : 0;
+    public int CountOfFiles => arrayOfFiles != null ? arrayOfFiles.Length : 0;
     public void ChangeFolder(string direction)
     {
         try
         {
-            if (direction.Substring(direction.Length - 2, 2) == ":\\") Directory.SetCurrentDirectory(direction);
+            if (direction == "..") Directory.SetCurrentDirectory("..");
+            else if (direction.Substring(direction.Length - 2, 2) == ":\\") Directory.SetCurrentDirectory(direction);
             else Directory.SetCurrentDirectory(path + "\\" + direction);
             path = Directory.GetCurrentDirectory();
             Folders();
@@ -44,20 +43,6 @@ class DirectoryFileManager
             path = Directory.GetCurrentDirectory();
             Folders();
             Files();
-            Logger.SaveLog(e.Message);
-        }
-    }
-    public void ChangeFolderBack()
-    {
-        try
-        {
-            Directory.SetCurrentDirectory("..");
-            path = Directory.GetCurrentDirectory();
-            Folders();
-            Files();
-        }
-        catch (Exception e)
-        {
             Logger.SaveLog(e.Message);
         }
     }
@@ -74,14 +59,9 @@ class DirectoryFileManager
             else temp[i] = temp[i].Remove(0, path.Length + 1);
             tempOutPut.Add(temp[i]);
         }
-        if (!(path.Length == 3))
-        {
-            returnDirectory = true;
-            tempOutPut.Insert(0, "..");
-        }
+        if (!(path.Length == 3)) tempOutPut.Insert(0, "..");
         else
         {
-            returnDirectory = false;
             List<string> drives = System.IO.Directory.GetLogicalDrives().ToList();
             drives.Remove(Path.Substring(0, 3));
             tempOutPut = drives.Concat(tempOutPut).ToList();
