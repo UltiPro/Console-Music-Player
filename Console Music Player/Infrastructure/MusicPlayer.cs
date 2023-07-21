@@ -14,10 +14,10 @@ class MusicPlayer
         WMP.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(TrackEnded);
         WMP.settings.volume = defaultVolume;
     }
-    public short VolumePlayer { get { return (short)WMP.settings.volume; } }
-    public bool MutePlayer { get { return WMP.settings.mute; } }
-    public string CurrentTrackDuration { get { return WMP.controls.currentPositionString; } }
-    public string TrackDuration { get { return WMP.currentMedia.durationString; } }
+    public short VolumePlayer => (short)WMP.settings.volume;
+    public bool MutePlayer => WMP.settings.mute;
+    public string CurrentTrackDuration => WMP.controls.currentPositionString;
+    public string TrackDuration => WMP.currentMedia.durationString;
     public void Start(string path)
     {
         if (!File.Exists(path))
@@ -49,10 +49,10 @@ class MusicPlayer
     {
         if (state == (int)WMPPlayState.wmppsMediaEnded)
         {
-            musicConsole.DFM.Refresh();
-            musicConsole.currentFileIdx = (musicConsole.currentFileIdx + 1) < musicConsole.DFM.CountOfFiles ? ++musicConsole.currentFileIdx : 0;
+            musicConsole.Dfm.Refresh();
+            musicConsole.currentFileIdx = (musicConsole.currentFileIdx + 1) < musicConsole.Dfm.CountOfFiles ? ++musicConsole.currentFileIdx : 0;
             musicConsole.UpdateFiles();
-            Start(musicConsole.DFM.ArrayOfFiles[musicConsole.currentFileIdx]);
+            Start(musicConsole.Dfm.ArrayOfFiles[musicConsole.currentFileIdx]);
             musicConsole.UpdateTrack();
         }
     }
