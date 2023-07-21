@@ -3,6 +3,6 @@ using MusicConsoleTool;
 
 ManageWindow.Start();
 
-MusicConsole MC = new MusicConsole();
+MusicConsole musicConsole = new MusicConsole();
 
-MC.Start();
+musicConsole.Start();
