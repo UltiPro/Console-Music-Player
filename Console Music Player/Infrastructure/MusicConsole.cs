@@ -15,12 +15,14 @@ class MusicConsole
     private char[] notes = { '♪', '♫' };
     private char[,] console;
     private int[] consoleAnimation;
-    public int currentFileIdx, cursorFileIdx;
     private int currentFolderIdx;
-    private bool initThreads, nowPlaying, launchApp;
-    public DirectoryFileManager DFM;
+    private bool initThreads, launchApp;
+    public bool nowPlaying;
+    private DirectoryFileManager DFM;
     private MusicPlayer MP;
     private Thread? threadTimer, threadAnimation, threadAnimation2;
+    public int currentFileIdx, cursorFileIdx;
+    public DirectoryFileManager Dfm => DFM;
     public MusicConsole()
     {
         console = new char[160, 40];
@@ -115,8 +117,7 @@ class MusicConsole
                     }
                     break;
                 case ConsoleKey.Enter:
-                    if (currentFolderIdx == 0 && DFM.ReturnDirectory) DFM.ChangeFolderBack();
-                    else DFM.ChangeFolder(DFM.ArrayOfFolders[currentFolderIdx]);
+                    DFM.ChangeFolder(DFM.ArrayOfFolders[currentFolderIdx]);
                     currentFolderIdx = currentFileIdx = cursorFileIdx = 0;
                     UpdatePath();
                     UpdateFolders();
@@ -351,7 +352,6 @@ class MusicConsole
     {
         while (launchApp)
         {
-            // czy git?
             {
                 BoxClear(widthOfWindow1_4 + 1, heightOfWindow3_4 - 2, widthOfWindow2_4 - 2, 1);
                 string outText = "<<< " + (MP.CurrentTrackDuration != "" ? MP.CurrentTrackDuration : "--:--") + " | " + MP.TrackDuration + " >>>";
