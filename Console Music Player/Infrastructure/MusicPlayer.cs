@@ -50,7 +50,6 @@ class MusicPlayer
         if (state == (int)WMPPlayState.wmppsMediaEnded)
         {
             musicConsole.Dfm.Refresh();
-            musicConsole.UpdateFiles();
             if (musicConsole.Dfm.CountOfFiles == 0)
             {
                 WMP.controls.stop();
@@ -58,6 +57,7 @@ class MusicPlayer
                 return;
             }
             musicConsole.currentFileIdx = (musicConsole.currentFileIdx + 1) < musicConsole.Dfm.CountOfFiles ? ++musicConsole.currentFileIdx : 0;
+            musicConsole.UpdateFiles();
             Start(musicConsole.Dfm.ArrayOfFiles[musicConsole.currentFileIdx]);
             musicConsole.UpdateTrack();
         }
