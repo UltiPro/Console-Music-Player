@@ -19,13 +19,13 @@ class ManageWindow
     {
         try
         {
-            IntPtr handle = GetConsoleWindow();
-            IntPtr sysMenu = GetSystemMenu(handle, false);
-            if (handle != IntPtr.Zero)
+            IntPtr consoleWindow = GetConsoleWindow();
+            IntPtr systemMenu = GetSystemMenu(consoleWindow, false);
+            if (consoleWindow != IntPtr.Zero)
             {
-                DeleteMenu(sysMenu, SC_CLOSE, MF_BYCOMMAND);
-                DeleteMenu(sysMenu, SC_MAXIMIZE, MF_BYCOMMAND);
-                DeleteMenu(sysMenu, SC_SIZE, MF_BYCOMMAND);
+                DeleteMenu(systemMenu, SC_CLOSE, MF_BYCOMMAND);
+                DeleteMenu(systemMenu, SC_MAXIMIZE, MF_BYCOMMAND);
+                DeleteMenu(systemMenu, SC_SIZE, MF_BYCOMMAND);
             }
         }
         catch (Exception e)
