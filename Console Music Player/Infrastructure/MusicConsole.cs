@@ -48,7 +48,6 @@ class MusicConsole
         heightOfWindow = Console.WindowHeight;
         heightOfWindow1_4 = Console.WindowHeight / 4;
         heightOfWindow3_4 = Console.WindowHeight / 4 * 3;
-        currentFileIdx = currentFileIdx = cursorFileIdx = 0;
         initThreads = true;
         nowPlaying = launchApp = false;
         consoleAnimation = new int[widthOfWindow2_4 - 4];
@@ -73,6 +72,10 @@ class MusicConsole
         }
         DFM = new DirectoryFileManager(tempPath);
         MP = new MusicPlayer(this, tempVolume);
+        currentFolderIdx = 0;
+        currentFileIdx = -2;
+        if (DFM.CountOfFiles > 0) cursorFileIdx = 0;
+        else cursorFileIdx = -2;
         threadTimer = new Thread(() => UpdateTimer());
         threadAnimation = new Thread(() => UpdateAnimation());
         threadAnimation2 = new Thread(() => UpdateAnimation2());
@@ -103,14 +106,14 @@ class MusicConsole
                     }
                     break;
                 case ConsoleKey.LeftArrow:
-                    if (cursorFileIdx > 0)
+                    if (cursorFileIdx > 0 && cursorFileIdx != -2)
                     {
                         cursorFileIdx--;
                         UpdateFiles();
                     }
                     break;
                 case ConsoleKey.RightArrow:
-                    if (cursorFileIdx < DFM.CountOfFiles - 1)
+                    if (cursorFileIdx < DFM.CountOfFiles - 1 && cursorFileIdx != -2)
                     {
                         cursorFileIdx++;
                         UpdateFiles();
@@ -118,7 +121,10 @@ class MusicConsole
                     break;
                 case ConsoleKey.Enter:
                     DFM.ChangeFolder(DFM.ArrayOfFolders[currentFolderIdx]);
-                    currentFolderIdx = currentFileIdx = cursorFileIdx = 0;
+                    currentFolderIdx = 0;
+                    currentFileIdx = -2;
+                    if (DFM.CountOfFiles > 0) cursorFileIdx = 0;
+                    else cursorFileIdx = -2;
                     UpdatePath();
                     UpdateFolders();
                     UpdateFiles();
