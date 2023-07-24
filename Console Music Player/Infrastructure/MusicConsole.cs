@@ -175,18 +175,48 @@ class MusicConsole
                     UpdateVolume(MP.VolumePlayer);
                     break;
                 case ConsoleKey.F5:
-                    MP.SkipTrack(-10);
+                    if (currentFileIdx == -2) continue;
+                    DFM.Refresh();
+                    if (DFM.CountOfFiles == 0)
+                    {
+                        MP.Pause();
+                        nowPlaying = false;
+                        continue;
+                    }
+                    if (!MP.IsJustStarted)
+                    {
+                        MP.Start(DFM.ArrayOfFiles[currentFileIdx]);
+                        continue;
+                    }
+                    currentFileIdx = (currentFileIdx - 1) < 0 ? DFM.CountOfFiles - 1 : --currentFileIdx;
+                    UpdateFiles();
+                    MP.Start(DFM.ArrayOfFiles[currentFileIdx]);
+                    UpdateTrack();
                     break;
                 case ConsoleKey.F6:
-                    MP.Pause();
-                    nowPlaying = false;
+                    MP.SkipTrack(-10);
                     break;
                 case ConsoleKey.F7:
-                    MP.Resume();
-                    nowPlaying = true;
+                    if (nowPlaying) MP.Pause();
+                    else MP.Resume();
+                    nowPlaying = !nowPlaying;
                     break;
                 case ConsoleKey.F8:
                     MP.SkipTrack(10);
+                    break;
+                case ConsoleKey.F9:
+                    if (currentFileIdx == -2) continue;
+                    DFM.Refresh();
+                    if (DFM.CountOfFiles == 0)
+                    {
+                        MP.Pause();
+                        nowPlaying = false;
+                        continue;
+                    }
+                    currentFileIdx = (currentFileIdx + 1) < DFM.CountOfFiles ? ++currentFileIdx : 0;
+                    UpdateFiles();
+                    MP.Start(DFM.ArrayOfFiles[currentFileIdx]);
+                    UpdateTrack();
                     break;
                 case ConsoleKey.I:
                     try
