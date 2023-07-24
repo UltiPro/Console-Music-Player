@@ -89,6 +89,7 @@ class MusicConsole
         while (launchApp)
         {
             inputFromKeyboard = Console.ReadKey(true);
+            if(Console.KeyAvailable) continue;
             switch (inputFromKeyboard.Key)
             {
                 case ConsoleKey.UpArrow:
