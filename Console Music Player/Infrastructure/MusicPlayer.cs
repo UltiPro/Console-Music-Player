@@ -14,7 +14,7 @@ class MusicPlayer
         windowsMediaPlayer.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(TrackEnded);
         windowsMediaPlayer.settings.volume = defaultVolume;
     }
-    public string TrackDuration => windowsMediaPlayer.currentMedia.durationString;
+    public string TrackDuration => windowsMediaPlayer.currentMedia != null ? windowsMediaPlayer.currentMedia.durationString : "00:00";
     public string TrackCurrentDuration => windowsMediaPlayer.controls.currentPositionString;
     public short PlayerVolume => (short)windowsMediaPlayer.settings.volume;
     public bool IsPlayerMute => windowsMediaPlayer.settings.mute;
