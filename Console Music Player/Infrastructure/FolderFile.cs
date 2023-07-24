@@ -4,8 +4,8 @@ namespace DirectoryFileManagerTool;
 
 class DirectoryFileManager
 {
-    private string path;
     private string[]? arrayOfFolders, arrayOfFiles;
+    private string path;
     public DirectoryFileManager(string path = "")
     {
         try
@@ -14,16 +14,16 @@ class DirectoryFileManager
         }
         catch (Exception e)
         {
-            Directory.SetCurrentDirectory(AppContext.BaseDirectory);
             Logger.SaveLog(e.Message);
+            Directory.SetCurrentDirectory(AppContext.BaseDirectory);
         }
         this.path = Directory.GetCurrentDirectory();
         Folders();
         Files();
     }
-    public string Path => path;
     public string[] ArrayOfFolders => arrayOfFolders != null ? arrayOfFolders : new string[0];
     public string[] ArrayOfFiles => arrayOfFiles != null ? arrayOfFiles : new string[0];
+    public string Path => path;
     public int CountOfFolders => arrayOfFolders != null ? arrayOfFolders.Length : 0;
     public int CountOfFiles => arrayOfFiles != null ? arrayOfFiles.Length : 0;
     public void ChangeFolder(string direction)
@@ -33,48 +33,45 @@ class DirectoryFileManager
             if (direction == "..") Directory.SetCurrentDirectory("..");
             else if (direction.Substring(direction.Length - 2, 2) == ":\\") Directory.SetCurrentDirectory(direction);
             else Directory.SetCurrentDirectory(path + "\\" + direction);
-            path = Directory.GetCurrentDirectory();
-            Folders();
-            Files();
         }
         catch (Exception e)
         {
-            Directory.SetCurrentDirectory(AppContext.BaseDirectory);
-            path = Directory.GetCurrentDirectory();
-            Folders();
-            Files();
             Logger.SaveLog(e.Message);
+            Directory.SetCurrentDirectory(AppContext.BaseDirectory);
         }
+        path = Directory.GetCurrentDirectory();
+        Folders();
+        Files();
     }
     private void Folders()
     {
-        var temp = Directory.GetDirectories(path).ToList();
-        List<string> tempOutPut = new List<string>();
-        DirectoryInfo dirInfo;
-        for (int i = 0; i < temp.Count; i++)
+        List<string> folders = Directory.GetDirectories(path).ToList();
+        List<string> outFolders = new List<string>();
+        DirectoryInfo folderInfo;
+        for (int i = 0; i < folders.Count; i++)
         {
-            dirInfo = new DirectoryInfo(temp[i]);
-            if (dirInfo.Attributes.HasFlag(FileAttributes.System)) continue;
-            if (path.Length == 3) temp[i] = temp[i].Remove(0, path.Length);
-            else temp[i] = temp[i].Remove(0, path.Length + 1);
-            tempOutPut.Add(temp[i]);
+            folderInfo = new DirectoryInfo(folders[i]);
+            if (folderInfo.Attributes.HasFlag(FileAttributes.System)) continue;
+            if (path.Length == 3) folders[i] = folders[i].Remove(0, path.Length);
+            else folders[i] = folders[i].Remove(0, path.Length + 1);
+            outFolders.Add(folders[i]);
         }
-        if (!(path.Length == 3)) tempOutPut.Insert(0, "..");
+        if (!(path.Length == 3)) outFolders.Insert(0, "..");
         else
         {
-            List<string> drives = System.IO.Directory.GetLogicalDrives().ToList();
+            List<string> drives = Directory.GetLogicalDrives().ToList();
             drives.Remove(Path.Substring(0, 3));
-            tempOutPut = drives.Concat(tempOutPut).ToList();
+            outFolders = drives.Concat(outFolders).ToList();
         }
-        arrayOfFolders = tempOutPut.ToArray();
+        arrayOfFolders = outFolders.ToArray();
     }
     private void Files()
     {
         string[] extensions = { "wav", "mp3" };
-        var musicFiles = new DirectoryInfo(path).GetFiles("*.*").Where(file => extensions.Contains(System.IO.Path.GetExtension(file.FullName).TrimStart('.').ToLowerInvariant()));
-        List<string> output = new List<string>();
-        foreach (FileInfo musicFile in musicFiles) output.Add(musicFile.Name);
-        arrayOfFiles = output.ToArray();
+        IEnumerable<FileInfo> files = new DirectoryInfo(path).GetFiles("*.*").Where(file => extensions.Contains(System.IO.Path.GetExtension(file.FullName).TrimStart('.').ToLowerInvariant()));
+        List<string> outFiles = new List<string>();
+        foreach (FileInfo file in files) outFiles.Add(file.Name);
+        arrayOfFiles = outFiles.ToArray();
     }
     public void Refresh()
     {
