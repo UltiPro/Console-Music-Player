@@ -16,6 +16,7 @@ class MusicPlayer
     }
     public short VolumePlayer => (short)WMP.settings.volume;
     public bool MutePlayer => WMP.settings.mute;
+    public bool IsJustStarted => WMP.controls.currentPosition < 2.0d ? true : false;
     public string CurrentTrackDuration => WMP.controls.currentPositionString;
     public string TrackDuration => WMP.currentMedia.durationString;
     public void Start(string path)
