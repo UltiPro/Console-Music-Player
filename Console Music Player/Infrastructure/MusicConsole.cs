@@ -33,14 +33,16 @@ class MusicConsole
         Console.ForegroundColor = ConsoleColor.White;
         try
         {
+            Console.SetBufferSize(console.GetLength(0), console.GetLength(1));
             Console.SetWindowSize(console.GetLength(0), console.GetLength(1));
-            Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
         }
+        
+        //tutaj
         catch (System.ArgumentOutOfRangeException e)
         {
             Logger.SaveLog("dupa" + e.ToString()); // tutaj
         }
-        //tutaj
+        
         string tempPath = "";
         short tempVolume = 50;
         try
@@ -53,13 +55,11 @@ class MusicConsole
                 file.Close();
             }
         }
-        catch (Exception e)
-        {
-            Logger.SaveLog(e.ToString());
-        }
+        catch (Exception) { }
         directoryFileManager = new DirectoryFileManager(tempPath);
         musicPlayer = new MusicPlayer(this, tempVolume);
         //tutaj
+
         threadTimer = new Thread(() => UpdateTimer());
         threadAnimation = new Thread(() => UpdateAnimation());
         threadAnimation2 = new Thread(() => UpdateAnimation2());
@@ -76,7 +76,7 @@ class MusicConsole
         currentFileIdx = -2;
         if (directoryFileManager.CountOfFiles > 0) cursorFileIdx = 0;
         else cursorFileIdx = -2;
-        launchApp = nowPlaying =  false;        
+        launchApp = nowPlaying = false;
     }
     public void Start()
     {
