@@ -173,11 +173,14 @@ class MusicConsole
                     UpdateFiles();
                     break;
                 case ConsoleKey.Spacebar:
-                    currentFileIdx = cursorFileIdx;
-                    nowPlaying = true;
-                    musicPlayer.Start(directoryFileManager.ArrayOfFiles[currentFileIdx]);
-                    UpdateFiles();
-                    UpdateTrack();
+                    if (cursorFileIdx != -2)
+                    {
+                        currentFileIdx = cursorFileIdx;
+                        nowPlaying = true;
+                        musicPlayer.Start(directoryFileManager.ArrayOfFiles[currentFileIdx]);
+                        UpdateFiles();
+                        UpdateTrack();
+                    }
                     break;
                 case ConsoleKey.F1:
                     musicPlayer.ChangeMute(true);
@@ -407,13 +410,11 @@ class MusicConsole
     {
         while (launchApp)
         {
-            {
-                BoxClear(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1);
-                string outText = "<<< " + (musicPlayer.TrackCurrentDuration != "" ? musicPlayer.TrackCurrentDuration : "--:--") + " | " + musicPlayer.TrackDuration + " >>>";
-                StringWriter(outText, widthOfWindow1_2 - (outText.Length / 2), heightOfWindow3_4_m2, widthOfWindow1_2_m1, 1, false);
-                UpdateConsoleBlock(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1, null, null);
-                Thread.Sleep(200);
-            }
+            BoxClear(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1);
+            string outText = "<<< " + (musicPlayer.TrackCurrentDuration != "" ? musicPlayer.TrackCurrentDuration : "--:--") + " | " + musicPlayer.TrackDuration + " >>>";
+            StringWriter(outText, widthOfWindow1_2 - (outText.Length / 2), heightOfWindow3_4_m2, widthOfWindow1_2_m1, 1, false);
+            UpdateConsoleBlock(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1, null, null);
+            Thread.Sleep(200);
         }
     }
     private void UpdateAnimationPassive()
