@@ -6,11 +6,11 @@ class DirectoryFileManager
 {
     private string[]? arrayOfFolders, arrayOfFiles;
     private string path;
-    public DirectoryFileManager(string path = "")
+    public DirectoryFileManager(string startPath = "")
     {
         try
         {
-            Directory.SetCurrentDirectory(path);
+            Directory.SetCurrentDirectory(startPath);
         }
         catch (Exception e)
         {
