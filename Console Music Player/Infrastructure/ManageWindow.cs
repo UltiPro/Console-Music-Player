@@ -31,6 +31,7 @@ class ManageWindow
         catch (Exception e)
         {
             Logger.SaveLog(e.Message);
+            System.Environment.Exit(-1);
         }
     }
 }
