@@ -165,7 +165,6 @@ class MusicConsole
                     currentFolderIdx = 0;
                     currentFileIdxMemory = currentFileIdx == -2 ? currentFileIdxMemory : currentFileIdx;
                     currentFileIdx = Path.GetDirectoryName(musicPlayer.TrackPath) == directoryFileManager.Path ? currentFileIdxMemory : -2;
-                    Logger.SaveLog(currentFileIdx + " " + currentFileIdxMemory + " " + directoryFileManager.Path + " " + directoryFileManager.ArrayOfFolders[currentFolderIdx]);
                     if (directoryFileManager.CountOfFiles > 0) cursorFileIdx = 0;
                     else cursorFileIdx = -2;
                     UpdatePath();
