@@ -27,7 +27,7 @@ class MusicConsole
     private readonly int heightOfWindow3_4, heightOfWindow3_4_m1, heightOfWindow3_4_m2, heightOfWindow3_4_m3, heightOfWindow3_4_m4, heightOfWindow3_4_m6;
     private readonly int heightOfWindow3_4_m9, heightOfWindow3_4_m10, heightOfWindow3_4_m12, heightOfWindow3_4_p1, heightOfWindow3_4_p2, heightOfWindow3_4_p3;
     private readonly int heightOfWindow3_4_p4, heightOfWindow3_4_p5, heightOfWindow3_4_p6, heightOfWindow3_4_p7, heightOfWindow3_4_p8;
-    private int currentFolderIdx, cursorFileIdx;
+    private int currentFolderIdx, cursorFileIdx, currentFileIdxMemory;
     private bool launchApp;
     public DirectoryFileManager DirectoryFileManager => directoryFileManager;
     public int currentFileIdx;
@@ -112,7 +112,7 @@ class MusicConsole
         heightOfWindow3_4_p8 = heightOfWindow3_4 + 8;
         consoleAnimation = new int[widthOfWindow1_2_m4];
         currentFolderIdx = 0;
-        currentFileIdx = -2;
+        currentFileIdx = currentFileIdxMemory = -2;
         if (directoryFileManager.CountOfFiles > 0) cursorFileIdx = 0;
         else cursorFileIdx = -2;
         launchApp = nowPlaying = false;
@@ -163,7 +163,9 @@ class MusicConsole
                 case ConsoleKey.Enter:
                     directoryFileManager.ChangeFolder(directoryFileManager.ArrayOfFolders[currentFolderIdx]);
                     currentFolderIdx = 0;
-                    currentFileIdx = -2;
+                    currentFileIdxMemory = currentFileIdx == -2 ? currentFileIdxMemory : currentFileIdx;
+                    currentFileIdx = Path.GetDirectoryName(musicPlayer.TrackPath) == directoryFileManager.Path ? currentFileIdxMemory : -2;
+                    Logger.SaveLog(currentFileIdx + " " + currentFileIdxMemory + " " + directoryFileManager.Path + " " + directoryFileManager.ArrayOfFolders[currentFolderIdx]);
                     if (directoryFileManager.CountOfFiles > 0) cursorFileIdx = 0;
                     else cursorFileIdx = -2;
                     UpdatePath();
