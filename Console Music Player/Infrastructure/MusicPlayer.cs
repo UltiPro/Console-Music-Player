@@ -7,7 +7,7 @@ class MusicPlayer
 {
     private WindowsMediaPlayer windowsMediaPlayer;
     private MusicConsole musicConsole;
-    public MusicPlayer(MusicConsole musicConsole, short startVolume = 50)
+    public MusicPlayer(MusicConsole musicConsole, short startVolume = 100)
     {
         this.musicConsole = musicConsole;
         windowsMediaPlayer = new WindowsMediaPlayer();
