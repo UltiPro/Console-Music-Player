@@ -12,6 +12,9 @@ class Logger
                 file.Close();
             }
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+            throw new Exception(info);
+        }
     }
 }
