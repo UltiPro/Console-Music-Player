@@ -7,12 +7,12 @@ class MusicPlayer
 {
     private WindowsMediaPlayer windowsMediaPlayer;
     private MusicConsole musicConsole;
-    public MusicPlayer(MusicConsole musicConsole, short defaultVolume = 50)
+    public MusicPlayer(MusicConsole musicConsole, short startVolume = 50)
     {
         this.musicConsole = musicConsole;
         windowsMediaPlayer = new WindowsMediaPlayer();
         windowsMediaPlayer.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(TrackEnded);
-        windowsMediaPlayer.settings.volume = defaultVolume;
+        windowsMediaPlayer.settings.volume = startVolume;
     }
     public string TrackDuration => windowsMediaPlayer.currentMedia != null ? windowsMediaPlayer.currentMedia.durationString : "00:00";
     public string TrackCurrentDuration => windowsMediaPlayer.controls.currentPositionString;
