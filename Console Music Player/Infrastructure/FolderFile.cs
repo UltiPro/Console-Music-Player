@@ -6,15 +6,14 @@ class DirectoryFileManager
 {
     private string[]? arrayOfFolders, arrayOfFiles;
     private string path;
-    public DirectoryFileManager(string startPath = "")
+    public DirectoryFileManager(string? startPath)
     {
         try
         {
-            Directory.SetCurrentDirectory(startPath);
+            Directory.SetCurrentDirectory(startPath != null ? startPath : AppContext.BaseDirectory);
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            Logger.SaveLog(e.Message);
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
         }
         this.path = Directory.GetCurrentDirectory();
@@ -34,9 +33,8 @@ class DirectoryFileManager
             else if (direction.Substring(direction.Length - 2, 2) == ":\\") Directory.SetCurrentDirectory(direction);
             else Directory.SetCurrentDirectory(path + "\\" + direction);
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            Logger.SaveLog(e.Message);
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
         }
         path = Directory.GetCurrentDirectory();
