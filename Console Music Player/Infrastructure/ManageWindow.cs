@@ -30,7 +30,7 @@ class ManageWindow
         }
         catch (Exception e)
         {
-            Logger.SaveLog(e.ToString());
+            Logger.SaveLog(e.Message);
         }
     }
 }
