@@ -1,5 +1,5 @@
-# Console-Audio-Player
-Project Console Audio Player in C# by Patryk 'UltiPRO' Wójtowicz.
+# Console-Music-Player
+Project Console Music Player in C# by Patryk 'UltiPRO' Wójtowicz.
 
 
 
