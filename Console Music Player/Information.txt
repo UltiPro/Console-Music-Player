@@ -20,7 +20,7 @@ F1 -> Mute
 F2 -> Volume Down
 F3 -> Volume Up
 F4 -> Unmute
-F5 -> Previous track (if the track lasted more than 2 seconds it starts again, otherwise it jumps to 
+F5 -> Previous track (if the track lasts more than 2 seconds it starts again, otherwise it jumps to 
                       the previous track or the last one in the list if there are no more tracks to skip)
 F6 -> Skip Back (10 seconds)
 F7 -> Pause/Play
