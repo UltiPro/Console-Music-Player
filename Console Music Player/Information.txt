@@ -8,11 +8,7 @@
                                                                                                                                 /\___/            
                                                                                                                                 \/__/             
 
------------------------------------------------------------------------------------------------------------
-
-Welcome To "Console Music Player" by Patryk Wójtowicz
-
-Controls:
+--------------------------------------------------------------------------------------------------------------------------------------------------
 
 Up Arrow -> Scroll Folder Up
 Down Arrow -> Scroll Folder Down
@@ -20,24 +16,24 @@ Left Arrow -> Scroll File Up
 Right Arrow -> Scroll File Down
 Enter -> Choose Folder
 Spacebar -> Choose File (Start)
-F1 -> Unmute
+F1 -> Mute
 F2 -> Volume Down
 F3 -> Volume Up
-F4 -> Mute
+F4 -> Unmute
+F5 -> Previous track (if the track lasted more than 2 seconds it starts again, otherwise it jumps to 
+                      the previous track or the last one in the list if there are no more tracks to skip)
+F6 -> Skip Back (10 seconds)
+F7 -> Pause/Play
+F8 -> Skip Forward (10 seconds)
+F9 -> Next Track (if last, it goes to first in the list)
+I -> THIS File
+Escape -> Turn Off Application
 
-F5 -> Pause
-F6 -> Skip Back
+--------------------------------------------------------------------------------------------------------------------------------------------------
 
-F7 -> Resume
-F8 -> Skip Front
-I -> Infromation in THIS File
-Escape -> Turn Off Program
+Report bugs at: https://github.com/UltiPro/Console-Music-Player
 
------------------------------------------------------------------------------------------------------------
-
-Report bugs at https://github.com/UltiPro/Console-Music-Player.
-
------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------
 
 MIT License
 
