@@ -409,11 +409,18 @@ class MusicConsole
     {
         while (launchApp)
         {
-            BoxClear(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1);
-            string outText = "<<< " + (musicPlayer.TrackCurrentDuration != "" ? musicPlayer.TrackCurrentDuration : "--:--") + " | " + musicPlayer.TrackDuration + " >>>";
-            StringWriter(outText, widthOfWindow1_2 - (outText.Length / 2), heightOfWindow3_4_m2, widthOfWindow1_2_m1, 1, false);
-            UpdateConsoleBlock(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1, null, null);
-            Thread.Sleep(200);
+            try
+            {
+                BoxClear(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1);
+                string outText = "<<< " + (musicPlayer.TrackCurrentDuration != "" ? musicPlayer.TrackCurrentDuration : "--:--") + " | " + musicPlayer.TrackDuration + " >>>";
+                StringWriter(outText, widthOfWindow1_2 - (outText.Length / 2), heightOfWindow3_4_m2, widthOfWindow1_2_m1, 1, false);
+                UpdateConsoleBlock(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1, null, null);
+                Thread.Sleep(200);
+            }
+            catch(Exception e)
+            {
+                if(e.HResult != -2147417846) Logger.SaveLog(e.Message);
+            }
         }
     }
     private void UpdateAnimationPassive()
@@ -429,27 +436,34 @@ class MusicConsole
         int rndNumber = rnd.Next(0, heightOfWindow3_4_m9);
         while (launchApp)
         {
-            if (nowPlaying)
+            try
             {
-                for (int i = 0; i < consoleAnimation.Length; i++)
+                if (nowPlaying)
                 {
-                    consoleAnimation[i] = rndNumber;
-                    rndNumber = rnd.Next(0, heightOfWindow3_4_m9);
-                }
-                int z = 0;
-                for (int i = widthOfWindow1_4_p2; i < widthOfWindow1_4_p2 + widthOfWindow1_2_m4; i++)
-                {
-                    for (int j = heightOfWindow3_4_m4; j > 5; j--)
+                    for (int i = 0; i < consoleAnimation.Length; i++)
                     {
-                        if (j > 8 + consoleAnimation[z]) console[i, j] = dots[0];
-                        else console[i, j] = ' ';
+                        consoleAnimation[i] = rndNumber;
+                        rndNumber = rnd.Next(0, heightOfWindow3_4_m9);
                     }
-                    z++;
+                    int z = 0;
+                    for (int i = widthOfWindow1_4_p2; i < widthOfWindow1_4_p2 + widthOfWindow1_2_m4; i++)
+                    {
+                        for (int j = heightOfWindow3_4_m4; j > 5; j--)
+                        {
+                            if (j > 8 + consoleAnimation[z]) console[i, j] = dots[0];
+                            else console[i, j] = ' ';
+                        }
+                        z++;
+                    }
+                    UpdateConsoleBlock(widthOfWindow1_4_p2, 6, widthOfWindow1_2_m4, heightOfWindow3_4_m9, null, null);
                 }
-                UpdateConsoleBlock(widthOfWindow1_4_p2, 6, widthOfWindow1_2_m4, heightOfWindow3_4_m9, null, null);
+                else UpdateAnimationPassive();
+                Thread.Sleep(200);
             }
-            else UpdateAnimationPassive();
-            Thread.Sleep(200);
+            catch(Exception e)
+            {
+                Logger.SaveLog(e.Message);
+            }
         }
     }
     private void UpdateAnimation2()
@@ -458,26 +472,33 @@ class MusicConsole
         BoxClear(widthOfWindow1_4, heightOfWindow3_4_p5, widthOfWindow1_2, 2);
         while (launchApp)
         {
-            if (nowPlaying)
+            try
             {
-                int col = rnd.Next(0, 10) + widthOfWindow1_4_p1;
-                int row = heightOfWindow3_4_p5;
-                while (col <= widthOfWindow3_4_m2)
+                if (nowPlaying)
                 {
-                    console[col, row] = notes[col % 2];
-                    col += rnd.Next(0, 10);
+                    int col = rnd.Next(0, 10) + widthOfWindow1_4_p1;
+                    int row = heightOfWindow3_4_p5;
+                    while (col <= widthOfWindow3_4_m2)
+                    {
+                        console[col, row] = notes[col % 2];
+                        col += rnd.Next(0, 10);
+                    }
+                    col = rnd.Next(0, 10) + widthOfWindow1_4_p1;
+                    row++;
+                    while (col <= widthOfWindow3_4_m2)
+                    {
+                        console[col, row] = notes[col % 2];
+                        col += rnd.Next(0, 10);
+                    }
+                    UpdateConsoleBlock(widthOfWindow1_4, heightOfWindow3_4_p5, widthOfWindow1_2, 2, null, null);
+                    BoxClear(widthOfWindow1_4, heightOfWindow3_4_p5, widthOfWindow1_2, 2);
                 }
-                col = rnd.Next(0, 10) + widthOfWindow1_4_p1;
-                row++;
-                while (col <= widthOfWindow3_4_m2)
-                {
-                    console[col, row] = notes[col % 2];
-                    col += rnd.Next(0, 10);
-                }
-                UpdateConsoleBlock(widthOfWindow1_4, heightOfWindow3_4_p5, widthOfWindow1_2, 2, null, null);
-                BoxClear(widthOfWindow1_4, heightOfWindow3_4_p5, widthOfWindow1_2, 2);
+                Thread.Sleep(200);
             }
-            Thread.Sleep(200);
+            catch(Exception e)
+            {
+                Logger.SaveLog(e.Message);
+            }
         }
     }
     private void BoxClear(int startX, int startY, int lengthOfBlock, int heightOfBlock)
