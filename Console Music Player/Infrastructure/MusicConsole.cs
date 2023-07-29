@@ -19,18 +19,17 @@ class MusicConsole
     private readonly int widthOfWindow, widthOfWindow_m1, widthOfWindow_m2;
     private readonly int widthOfWindow1_8;
     private readonly int widthOfWindow1_4, widthOfWindow1_4_m1, widthOfWindow1_4_m2, widthOfWindow1_4_p1, widthOfWindow1_4_p2;
-    private readonly int widthOfWindow1_2, widthOfWindow1_2_m1, widthOfWindow1_2_m2, widthOfWindow1_2_m4, widthOfWindow1_2_m11, widthOfWindow1_2_p1;
+    private readonly int widthOfWindow1_2, widthOfWindow1_2_m1, widthOfWindow1_2_m2, widthOfWindow1_2_m3, widthOfWindow1_2_m4, widthOfWindow1_2_m8, widthOfWindow1_2_m10, widthOfWindow1_2_m11, widthOfWindow1_2_p1;
     private readonly int widthOfWindow3_4, widthOfWindow3_4_m2, widthOfWindow3_4_p1, widthOfWindow3_4_p2;
     private readonly int widthOfWindow_m_widthOfWindow1_8_m3;
     private readonly int heightOfWindow, heightOfWindow_m1;
     private readonly int heightOfWindow1_4, heightOfWindow1_4_m1;
-    private readonly int heightOfWindow3_4, heightOfWindow3_4_m1, heightOfWindow3_4_m2, heightOfWindow3_4_m3, heightOfWindow3_4_m4, heightOfWindow3_4_m6;
+    private readonly int heightOfWindow3_4, heightOfWindow3_4_m1, heightOfWindow3_4_m2, heightOfWindow3_4_m3, heightOfWindow3_4_m4, heightOfWindow3_4_m6, heightOfWindow3_4_m7;
     private readonly int heightOfWindow3_4_m9, heightOfWindow3_4_m10, heightOfWindow3_4_m12, heightOfWindow3_4_p1, heightOfWindow3_4_p2, heightOfWindow3_4_p3;
     private readonly int heightOfWindow3_4_p4, heightOfWindow3_4_p5, heightOfWindow3_4_p6, heightOfWindow3_4_p7, heightOfWindow3_4_p8;
-    private int currentFolderIdx, cursorFileIdx, currentFileIdxMemory;
     private bool launchApp;
     public DirectoryFileManager DirectoryFileManager => directoryFileManager;
-    public int currentFileIdx;
+    public int currentFolderIdx, currentFileIdx, currentFileIdxMemory, cursorFileIdx;
     public bool nowPlaying;
     public MusicConsole()
     {
@@ -45,7 +44,7 @@ class MusicConsole
             Console.SetBufferSize(console.GetLength(0), console.GetLength(1));
             Console.SetWindowSize(console.GetLength(0), console.GetLength(1));
         }
-        catch (System.ArgumentOutOfRangeException e)
+        catch (Exception e)
         {
             Logger.SaveLog(e.Message);
             System.Environment.Exit(-1);
@@ -81,7 +80,10 @@ class MusicConsole
         widthOfWindow1_2 = Console.WindowWidth / 2;
         widthOfWindow1_2_m1 = widthOfWindow1_2 - 1;
         widthOfWindow1_2_m2 = widthOfWindow1_2 - 2;
+        widthOfWindow1_2_m3 = widthOfWindow1_2 - 3;
         widthOfWindow1_2_m4 = widthOfWindow1_2 - 4;
+        widthOfWindow1_2_m8 = widthOfWindow1_2 - 8;
+        widthOfWindow1_2_m10 = widthOfWindow1_2 - 10;
         widthOfWindow1_2_m11 = widthOfWindow1_2 - 11;
         widthOfWindow1_2_p1 = widthOfWindow1_2 + 1;
         widthOfWindow3_4 = Console.WindowWidth / 4 * 3;
@@ -99,6 +101,7 @@ class MusicConsole
         heightOfWindow3_4_m3 = heightOfWindow3_4 - 3;
         heightOfWindow3_4_m4 = heightOfWindow3_4 - 4;
         heightOfWindow3_4_m6 = heightOfWindow3_4 - 6;
+        heightOfWindow3_4_m7 = heightOfWindow3_4 - 7;
         heightOfWindow3_4_m9 = heightOfWindow3_4 - 9;
         heightOfWindow3_4_m10 = heightOfWindow3_4 - 10;
         heightOfWindow3_4_m12 = heightOfWindow3_4 - 12;
@@ -138,6 +141,7 @@ class MusicConsole
                         currentFolderIdx--;
                         UpdateFolders();
                     }
+                    Thread.Sleep(100);
                     break;
                 case ConsoleKey.DownArrow:
                     if (currentFolderIdx < directoryFileManager.CountOfFolders - 1)
@@ -145,6 +149,7 @@ class MusicConsole
                         currentFolderIdx++;
                         UpdateFolders();
                     }
+                    Thread.Sleep(100);
                     break;
                 case ConsoleKey.LeftArrow:
                     if (cursorFileIdx > 0 && cursorFileIdx != -2)
@@ -152,6 +157,7 @@ class MusicConsole
                         cursorFileIdx--;
                         UpdateFiles();
                     }
+                    Thread.Sleep(100);
                     break;
                 case ConsoleKey.RightArrow:
                     if (cursorFileIdx < directoryFileManager.CountOfFiles - 1 && cursorFileIdx != -2)
@@ -159,6 +165,7 @@ class MusicConsole
                         cursorFileIdx++;
                         UpdateFiles();
                     }
+                    Thread.Sleep(100);
                     break;
                 case ConsoleKey.Enter:
                     directoryFileManager.ChangeFolder(directoryFileManager.ArrayOfFolders[currentFolderIdx]);
@@ -175,10 +182,7 @@ class MusicConsole
                     if (cursorFileIdx != -2)
                     {
                         currentFileIdx = cursorFileIdx;
-                        nowPlaying = true;
                         musicPlayer.Start(directoryFileManager.ArrayOfFiles[currentFileIdx]);
-                        UpdateFiles();
-                        UpdateTrack();
                     }
                     break;
                 case ConsoleKey.F1:
@@ -199,22 +203,13 @@ class MusicConsole
                     break;
                 case ConsoleKey.F5:
                     if (currentFileIdx == -2) continue;
-                    directoryFileManager.Refresh();
-                    if (directoryFileManager.CountOfFiles == 0)
-                    {
-                        musicPlayer.Pause();
-                        nowPlaying = false;
-                        continue;
-                    }
                     if (!musicPlayer.IsPlayerJustStarted)
                     {
-                        musicPlayer.Start(directoryFileManager.ArrayOfFiles[currentFileIdx]);
+                        musicPlayer.RewindTrack(double.MinValue);
                         continue;
                     }
                     currentFileIdx = (currentFileIdx - 1) < 0 ? directoryFileManager.CountOfFiles - 1 : --currentFileIdx;
-                    UpdateFiles();
                     musicPlayer.Start(directoryFileManager.ArrayOfFiles[currentFileIdx]);
-                    UpdateTrack();
                     break;
                 case ConsoleKey.F6:
                     musicPlayer.RewindTrack(-10);
@@ -229,17 +224,8 @@ class MusicConsole
                     break;
                 case ConsoleKey.F9:
                     if (currentFileIdx == -2) continue;
-                    directoryFileManager.Refresh();
-                    if (directoryFileManager.CountOfFiles == 0)
-                    {
-                        musicPlayer.Pause();
-                        nowPlaying = false;
-                        continue;
-                    }
                     currentFileIdx = (currentFileIdx + 1) < directoryFileManager.CountOfFiles ? ++currentFileIdx : 0;
-                    UpdateFiles();
                     musicPlayer.Start(directoryFileManager.ArrayOfFiles[currentFileIdx]);
-                    UpdateTrack();
                     break;
                 case ConsoleKey.I:
                     try
@@ -287,7 +273,7 @@ class MusicConsole
         catch (Exception e)
         {
             Logger.SaveLog(e.Message);
-            for (int i = 0; i < widthOfWindow1_2 - 10; i++) Console.Write(" ");
+            for (int i = 0; i < widthOfWindow1_2_m10; i++) Console.Write(" ");
             Console.Write("Console Music Player");
         }
         Console.Write("\n\n\n");
@@ -305,7 +291,6 @@ class MusicConsole
         UpdateFolders();
         UpdateFiles();
         UpdateVolume();
-        UpdateAnimationPassive();
     }
     private void DrawBaseConsole()
     {
@@ -370,18 +355,16 @@ class MusicConsole
         StringWriter(newPath, 1, 3, widthOfWindow1_4_m2, 3, true);
         UpdateConsoleBlock(1, 3, widthOfWindow1_4_m2, 3, null, null);
     }
-    private void UpdateFolders()
+    public void UpdateFolders()
     {
-        int skipFolders = currentFolderIdx / heightOfWindow3_4_m12;
-        ListWriter(directoryFileManager.ArrayOfFolders.Skip(skipFolders * heightOfWindow3_4_m12).Take(heightOfWindow3_4_m12).ToArray(), 1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, true);
+        ListWriter(directoryFileManager.ArrayOfFolders.Skip(currentFolderIdx / heightOfWindow3_4_m12 * heightOfWindow3_4_m12).Take(heightOfWindow3_4_m12).ToArray(), 1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, true);
         UpdateConsoleBlock(1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, (currentFolderIdx % heightOfWindow3_4_m12), null);
     }
     public void UpdateFiles()
     {
-        int skipFiles = cursorFileIdx / heightOfWindow3_4_m6;
-        int skipFilesMultiplication = skipFiles * heightOfWindow3_4_m6;
+        int skipFilesMultiplication = cursorFileIdx / heightOfWindow3_4_m6 * heightOfWindow3_4_m6;
         ListWriter(directoryFileManager.ArrayOfFiles.Skip(skipFilesMultiplication).Take(heightOfWindow3_4_m6).ToArray(), widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, false);
-        UpdateConsoleBlock(widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, (cursorFileIdx % heightOfWindow3_4_m6), (currentFileIdx >= skipFilesMultiplication && currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4 - 7) ? (currentFileIdx % heightOfWindow3_4_m6) : null);
+        UpdateConsoleBlock(widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, (cursorFileIdx % heightOfWindow3_4_m6), (currentFileIdx >= skipFilesMultiplication && currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7) ? (currentFileIdx % heightOfWindow3_4_m6) : null);
     }
     private void UpdateVolume()
     {
@@ -399,8 +382,12 @@ class MusicConsole
     }
     public void UpdateTrack()
     {
-        string trackToDisplay = directoryFileManager.ArrayOfFiles[currentFileIdx].Remove(directoryFileManager.ArrayOfFiles[currentFileIdx].Length - 4);
-        if (trackToDisplay.Length > widthOfWindow1_2 - 3) trackToDisplay = trackToDisplay.Substring(0, widthOfWindow1_2 - 8) + " ...";
+        string trackToDisplay = "Choose new track...";
+        if (directoryFileManager.CountOfFiles > 0 && currentFileIdx != -2)
+        {
+            trackToDisplay = directoryFileManager.ArrayOfFiles[currentFileIdx].Remove(directoryFileManager.ArrayOfFiles[currentFileIdx].Length - 4);
+            if (trackToDisplay.Length > widthOfWindow1_2_m3) trackToDisplay = trackToDisplay.Substring(0, widthOfWindow1_2_m8) + " ...";
+        }
         BoxClear(widthOfWindow1_4_p1, 1, widthOfWindow1_2_m1, 1);
         StringWriter(trackToDisplay, widthOfWindow1_2 - (trackToDisplay.Length / 2), 1, widthOfWindow1_2_m1, 1, false);
         UpdateConsoleBlock(widthOfWindow1_4, 1, widthOfWindow1_2_m1, 1, null, null);
@@ -413,40 +400,33 @@ class MusicConsole
             {
                 BoxClear(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1);
                 string outText = "<<< " + (musicPlayer.TrackCurrentDuration != "" ? musicPlayer.TrackCurrentDuration : "--:--") + " | " + musicPlayer.TrackDuration + " >>>";
-                StringWriter(outText, widthOfWindow1_2 - (outText.Length / 2), heightOfWindow3_4_m2, widthOfWindow1_2_m1, 1, false);
+                StringWriter(outText, widthOfWindow1_2_m10, heightOfWindow3_4_m2, widthOfWindow1_2_m1, 1, false);
                 UpdateConsoleBlock(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1, null, null);
                 Thread.Sleep(200);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                if(e.HResult != -2147417846) Logger.SaveLog(e.Message);
+                if (e.HResult != -2147417846) Logger.SaveLog(e.Message);
             }
         }
-    }
-    private void UpdateAnimationPassive()
-    {
-        BoxClear(widthOfWindow1_4_p1, 3, widthOfWindow1_2_m2, heightOfWindow3_4_m3);
-        string infoText = "PAUSED: Resume Or Select New Track";
-        StringWriter(infoText, widthOfWindow1_2 - (infoText.Length / 2), heightOfWindow3_4 / 2, widthOfWindow1_2_m2, 1, false);
-        UpdateConsoleBlock(widthOfWindow1_4_p1, 0, widthOfWindow1_2_m2, heightOfWindow3_4_m3, null, null);
     }
     private void UpdateAnimation()
     {
         Random rnd = new Random();
-        int rndNumber = rnd.Next(0, heightOfWindow3_4_m9);
+        string infoText = "PAUSED: Resume Or Select New Track";
+        int z, widthOfAnimation = widthOfWindow1_4_p2 + widthOfWindow1_2_m4;
+        int infoTextStartX = widthOfWindow1_2 - (infoText.Length / 2), infoTextStartY = heightOfWindow3_4 / 2;
+        bool changedMode = true;
         while (launchApp)
         {
             try
             {
                 if (nowPlaying)
                 {
-                    for (int i = 0; i < consoleAnimation.Length; i++)
-                    {
-                        consoleAnimation[i] = rndNumber;
-                        rndNumber = rnd.Next(0, heightOfWindow3_4_m9);
-                    }
-                    int z = 0;
-                    for (int i = widthOfWindow1_4_p2; i < widthOfWindow1_4_p2 + widthOfWindow1_2_m4; i++)
+                    changedMode = true;
+                    for (int i = 0; i < consoleAnimation.Length; i++) consoleAnimation[i] = rnd.Next(0, heightOfWindow3_4_m9);
+                    z = 0;
+                    for (int i = widthOfWindow1_4_p2; i < widthOfAnimation; i++)
                     {
                         for (int j = heightOfWindow3_4_m4; j > 5; j--)
                         {
@@ -457,10 +437,16 @@ class MusicConsole
                     }
                     UpdateConsoleBlock(widthOfWindow1_4_p2, 6, widthOfWindow1_2_m4, heightOfWindow3_4_m9, null, null);
                 }
-                else UpdateAnimationPassive();
+                else if (changedMode)
+                {
+                    changedMode = false;
+                    BoxClear(widthOfWindow1_4_p1, 3, widthOfWindow1_2_m2, heightOfWindow3_4_m3);
+                    StringWriter(infoText, infoTextStartX, infoTextStartY, widthOfWindow1_2_m2, 1, false);
+                    UpdateConsoleBlock(widthOfWindow1_4_p1, 0, widthOfWindow1_2_m2, heightOfWindow3_4_m3, null, null);
+                }
                 Thread.Sleep(200);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Logger.SaveLog(e.Message);
             }
@@ -469,7 +455,6 @@ class MusicConsole
     private void UpdateAnimation2()
     {
         Random rnd = new Random();
-        BoxClear(widthOfWindow1_4, heightOfWindow3_4_p5, widthOfWindow1_2, 2);
         while (launchApp)
         {
             try
@@ -477,17 +462,15 @@ class MusicConsole
                 if (nowPlaying)
                 {
                     int col = rnd.Next(0, 10) + widthOfWindow1_4_p1;
-                    int row = heightOfWindow3_4_p5;
                     while (col <= widthOfWindow3_4_m2)
                     {
-                        console[col, row] = notes[col % 2];
+                        console[col, heightOfWindow3_4_p5] = notes[col % 2];
                         col += rnd.Next(0, 10);
                     }
                     col = rnd.Next(0, 10) + widthOfWindow1_4_p1;
-                    row++;
                     while (col <= widthOfWindow3_4_m2)
                     {
-                        console[col, row] = notes[col % 2];
+                        console[col, heightOfWindow3_4_p6] = notes[col % 2];
                         col += rnd.Next(0, 10);
                     }
                     UpdateConsoleBlock(widthOfWindow1_4, heightOfWindow3_4_p5, widthOfWindow1_2, 2, null, null);
@@ -495,7 +478,7 @@ class MusicConsole
                 }
                 Thread.Sleep(200);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Logger.SaveLog(e.Message);
             }
@@ -552,12 +535,11 @@ class MusicConsole
     }
     private void StringWriter(string text, int startX, int startY, int lengthOfBlock, int heightOfBlock, bool? clearBox)
     {
-        string textCopied = text;
-        if (clearBox != null && clearBox == true) BoxClear(startX, startY, lengthOfBlock, heightOfBlock);
+        if (clearBox == true) BoxClear(startX, startY, lengthOfBlock, heightOfBlock);
         int tempXPosition = startX, tempLengthOfBlock = lengthOfBlock;
         int blockMultiplication = heightOfBlock * lengthOfBlock;
-        if (blockMultiplication < textCopied.Length) textCopied = "... " + textCopied.Substring(textCopied.Length - blockMultiplication + 4);
-        foreach (char c in textCopied)
+        if (blockMultiplication < text.Length) text = "... " + text.Substring(text.Length - blockMultiplication + 4);
+        foreach (char c in text)
         {
             if (tempLengthOfBlock > 0)
             {
@@ -578,22 +560,20 @@ class MusicConsole
     }
     private void ListWriter(string[] text, int startX, int startY, int lengthOfBlock, int heightOfBlock, bool truncateEnd)
     {
-        string[] copiedText = new string[text.Length];
-        text.CopyTo(copiedText, 0);
         BoxClear(startX, startY, lengthOfBlock, heightOfBlock);
         int tempXPosition = startX;
         heightOfBlock -= 2;
         int lsX = lengthOfBlock + startX;
         for (int i = startX; i < lsX; i++) console[i, startY] = arrows[0];
         startY++;
-        for (int i = 0; i < copiedText.Length; i++)
+        for (int i = 0; i < text.Length; i++)
         {
-            if (lengthOfBlock < copiedText[i].Length)
+            if (lengthOfBlock < text[i].Length)
             {
-                if (truncateEnd) copiedText[i] = copiedText[i].Substring(0, lengthOfBlock - 4) + " ...";
-                else copiedText[i] = "... " + copiedText[i].Substring(copiedText[i].Length - lengthOfBlock + 4);
+                if (truncateEnd) text[i] = text[i].Substring(0, lengthOfBlock - 4) + " ...";
+                else text[i] = "... " + text[i].Substring(text[i].Length - lengthOfBlock + 4);
             }
-            foreach (char c in copiedText[i])
+            foreach (char c in text[i])
             {
                 console[tempXPosition, startY] = c;
                 tempXPosition++;
@@ -610,14 +590,18 @@ class MusicConsole
     {
         lock (console)
         {
+            int row;
+            selectedItem++;
+            selectedItem2++;
             for (int i = startY; i < heightOfBlock + startY; i++)
             {
-                if (i - startY == selectedItem2 + 1)
+                row = i - startY;
+                if (row == selectedItem2)
                 {
                     Console.BackgroundColor = ConsoleColor.Green;
                     Console.ForegroundColor = ConsoleColor.White;
                 }
-                if (i - startY == selectedItem + 1)
+                if (row == selectedItem)
                 {
                     Console.BackgroundColor = ConsoleColor.White;
                     Console.ForegroundColor = ConsoleColor.Black;
