@@ -1,5 +1,3 @@
-using LoggerTool;
-
 namespace DirectoryFileManagerTool;
 
 class DirectoryFileManager
@@ -71,9 +69,22 @@ class DirectoryFileManager
         foreach (FileInfo file in files) outFiles.Add(file.Name);
         arrayOfFiles = outFiles.ToArray();
     }
-    public void Refresh()
+    public bool Refresh()
     {
-        Folders();
+        bool changedFolder = false;
+        try
+        {
+            Directory.SetCurrentDirectory(path);
+        }
+        catch (Exception e)
+        {
+            LoggerTool.Logger.SaveLog(e.ToString());
+            Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+            path = Directory.GetCurrentDirectory();
+            changedFolder = true;
+            Folders();
+        }
         Files();
+        return changedFolder;
     }
 }
