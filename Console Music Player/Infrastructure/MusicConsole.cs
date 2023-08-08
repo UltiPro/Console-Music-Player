@@ -51,13 +51,13 @@ class MusicConsole
         }
         try
         {
-            using (StreamReader file = new(AppContext.BaseDirectory + "/settings"))
+            using (StreamReader settingsFile = new(AppContext.BaseDirectory + "/settings"))
             {
-                directoryFileManager = new DirectoryFileManager(file.ReadLine());
+                directoryFileManager = new DirectoryFileManager(settingsFile.ReadLine());
                 short tempVolume;
-                if (short.TryParse(file.ReadLine(), out tempVolume)) musicPlayer = new MusicPlayer(this, tempVolume);
+                if (short.TryParse(settingsFile.ReadLine(), out tempVolume)) musicPlayer = new MusicPlayer(this, tempVolume);
                 else musicPlayer = new MusicPlayer(this);
-                file.Close();
+                settingsFile.Close();
             }
         }
         catch (Exception)
@@ -219,8 +219,8 @@ class MusicConsole
                     {
                         musicPlayer.Pause();
                         nowPlaying = !nowPlaying;
-                    } 
-                    else if(!nowPlaying && musicPlayer.IsLoaded)
+                    }
+                    else if (!nowPlaying && musicPlayer.IsLoaded)
                     {
                         musicPlayer.Play();
                         nowPlaying = !nowPlaying;
@@ -247,11 +247,11 @@ class MusicConsole
                 case ConsoleKey.Escape:
                     try
                     {
-                        using (StreamWriter file = new(AppContext.BaseDirectory + "/settings", false))
+                        using (StreamWriter settingsFile = new(AppContext.BaseDirectory + "/settings", false))
                         {
-                            file.WriteLine(directoryFileManager.Path);
-                            file.WriteLine(musicPlayer.PlayerVolume.ToString());
-                            file.Close();
+                            settingsFile.WriteLine(directoryFileManager.Path);
+                            settingsFile.WriteLine(musicPlayer.PlayerVolume.ToString());
+                            settingsFile.Close();
                         }
                     }
                     catch (Exception e)
@@ -271,15 +271,14 @@ class MusicConsole
         for (int i = 0; i < 10; i++) Console.WriteLine();
         try
         {
-            using (StreamReader sr = new(AppContext.BaseDirectory + "/Logo.txt"))
+            using (StreamReader logoFile = new(AppContext.BaseDirectory + "/Logo.txt"))
             {
                 String? line;
-                while ((line = sr.ReadLine()) != null) Console.WriteLine(line);
+                while ((line = logoFile.ReadLine()) != null) Console.WriteLine(line);
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            Logger.SaveLog(e.Message);
             for (int i = 0; i < widthOfWindow1_2_m10; i++) Console.Write(" ");
             Console.Write("Console Music Player");
         }
@@ -411,10 +410,7 @@ class MusicConsole
                 UpdateConsoleBlock(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1, null, null);
                 Thread.Sleep(200);
             }
-            catch (Exception e)
-            {
-                if (e.HResult != -2147417846) Logger.SaveLog(e.Message);
-            }
+            catch (Exception) { }
         }
     }
     private void UpdateAnimation()
@@ -453,10 +449,7 @@ class MusicConsole
                 }
                 Thread.Sleep(200);
             }
-            catch (Exception e)
-            {
-                Logger.SaveLog(e.Message);
-            }
+            catch (Exception) { }
         }
     }
     private void UpdateAnimation2()
@@ -485,10 +478,7 @@ class MusicConsole
                 }
                 Thread.Sleep(200);
             }
-            catch (Exception e)
-            {
-                Logger.SaveLog(e.Message);
-            }
+            catch (Exception) { }
         }
     }
     private void BoxClear(int startX, int startY, int lengthOfBlock, int heightOfBlock)
