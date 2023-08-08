@@ -18,6 +18,7 @@ class MusicPlayer
     public string TrackDuration => windowsMediaPlayer.currentMedia != null ? windowsMediaPlayer.currentMedia.durationString : "00:00";
     public string TrackCurrentDuration => windowsMediaPlayer.controls.currentPositionString;
     public short PlayerVolume => (short)windowsMediaPlayer.settings.volume;
+    public bool IsLoaded => windowsMediaPlayer.currentMedia != null ? (windowsMediaPlayer.currentMedia.duration > 0d ? true : false) : false;
     public bool IsPlayerMute => windowsMediaPlayer.settings.mute;
     public bool IsPlayerJustStarted => windowsMediaPlayer.controls.currentPosition < 2.0d ? true : false;
     public void Start(string path)
@@ -41,9 +42,15 @@ class MusicPlayer
             musicConsole.nowPlaying = false;
             if (changedFolder || musicConsole.DirectoryFileManager.CountOfFiles == 0)
             {
+                short oldVolume = (short)windowsMediaPlayer.settings.volume;
+                bool oldMute = windowsMediaPlayer.settings.mute;
+                windowsMediaPlayer = new WindowsMediaPlayer();
+                windowsMediaPlayer.settings.volume = oldVolume;
+                windowsMediaPlayer.settings.mute = oldMute;
                 if (changedFolder)
                 {
                     musicConsole.currentFolderIdx = 0;
+                    musicConsole.UpdatePath();
                     musicConsole.UpdateFolders();
                 }
                 musicConsole.currentFileIdx = musicConsole.currentFileIdxMemory = -2;
