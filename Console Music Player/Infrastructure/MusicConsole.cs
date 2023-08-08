@@ -348,7 +348,7 @@ class MusicConsole
         Console.Write(walls[5]);
         Console.MoveBufferArea(widthOfWindow_m2, heightOfWindow_m1, 1, 1, widthOfWindow_m1, heightOfWindow_m1, walls[0], Console.ForegroundColor, Console.BackgroundColor);
     }
-    private void UpdatePath()
+    public void UpdatePath()
     {
         string newPath = directoryFileManager.Path;
         if (!(newPath[newPath.Length - 1] == '\\')) newPath += "\\";
