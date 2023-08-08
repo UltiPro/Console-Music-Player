@@ -6,10 +6,10 @@ class Logger
     {
         try
         {
-            using (StreamWriter file = new(AppContext.BaseDirectory + "/Console Music Player Logs.txt", true))
+            using (StreamWriter loggerFile = new(AppContext.BaseDirectory + "/Console Music Player Logs.txt", true))
             {
-                await file.WriteLineAsync(DateTime.Now + " " + info);
-                file.Close();
+                await loggerFile.WriteLineAsync(DateTime.Now + " " + info);
+                loggerFile.Close();
             }
         }
         catch (Exception) { }
