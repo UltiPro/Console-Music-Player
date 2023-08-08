@@ -72,13 +72,8 @@ class DirectoryFileManager
     public bool Refresh()
     {
         bool changedFolder = false;
-        try
+        if (!Directory.Exists(path))
         {
-            Directory.SetCurrentDirectory(path);
-        }
-        catch (Exception e)
-        {
-            LoggerTool.Logger.SaveLog(e.ToString());
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
             path = Directory.GetCurrentDirectory();
             changedFolder = true;
