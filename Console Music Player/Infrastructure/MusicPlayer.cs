@@ -28,6 +28,7 @@ class MusicPlayer
         {
             short oldVolume = (short)windowsMediaPlayer.settings.volume;
             bool oldMute = windowsMediaPlayer.settings.mute;
+            windowsMediaPlayer.close();
             windowsMediaPlayer = new WindowsMediaPlayer();
             windowsMediaPlayer.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(TrackEnded);
             windowsMediaPlayer.settings.volume = oldVolume;
@@ -44,6 +45,7 @@ class MusicPlayer
             {
                 short oldVolume = (short)windowsMediaPlayer.settings.volume;
                 bool oldMute = windowsMediaPlayer.settings.mute;
+                windowsMediaPlayer.close();
                 windowsMediaPlayer = new WindowsMediaPlayer();
                 windowsMediaPlayer.settings.volume = oldVolume;
                 windowsMediaPlayer.settings.mute = oldMute;
