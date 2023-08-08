@@ -215,9 +215,16 @@ class MusicConsole
                     musicPlayer.RewindTrack(-10);
                     break;
                 case ConsoleKey.F7:
-                    if (nowPlaying) musicPlayer.Pause();
-                    else musicPlayer.Play();
-                    nowPlaying = !nowPlaying;
+                    if (nowPlaying)
+                    {
+                        musicPlayer.Pause();
+                        nowPlaying = !nowPlaying;
+                    } 
+                    else if(!nowPlaying && musicPlayer.IsLoaded)
+                    {
+                        musicPlayer.Play();
+                        nowPlaying = !nowPlaying;
+                    }
                     break;
                 case ConsoleKey.F8:
                     musicPlayer.RewindTrack(10);
