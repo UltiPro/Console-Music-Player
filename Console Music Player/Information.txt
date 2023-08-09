@@ -25,7 +25,7 @@ F5 -> Previous track (if the track lasts more than 2 seconds it starts again, ot
 F6 -> Skip Back (-10 seconds of current track)
 F7 -> Pause/Play
 F8 -> Skip Forward (+10 seconds of current track)
-F9 -> Next Track (if last, it goes to first in the list)
+F9 -> Next Track (jumps to the next track or the first one in the list if there are no more tracks to pass)
 I -> THIS File
 Escape -> Turn Off Application
 
