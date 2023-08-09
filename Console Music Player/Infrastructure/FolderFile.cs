@@ -2,7 +2,7 @@ namespace DirectoryFileManagerTool;
 
 class DirectoryFileManager
 {
-    private string[]? arrayOfFolders, arrayOfFiles;
+    private string[] arrayOfFolders, arrayOfFiles;
     private string path;
     public DirectoryFileManager(string? startPath)
     {
@@ -15,14 +15,15 @@ class DirectoryFileManager
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
         }
         this.path = Directory.GetCurrentDirectory();
+        arrayOfFolders = arrayOfFiles = new string[0];
         Folders();
         Files();
     }
-    public string[] ArrayOfFolders => arrayOfFolders != null ? arrayOfFolders : new string[0];
-    public string[] ArrayOfFiles => arrayOfFiles != null ? arrayOfFiles : new string[0];
+    public string[] ArrayOfFolders => arrayOfFolders;
+    public string[] ArrayOfFiles => arrayOfFiles;
     public string Path => path;
-    public int CountOfFolders => arrayOfFolders != null ? arrayOfFolders.Length : 0;
-    public int CountOfFiles => arrayOfFiles != null ? arrayOfFiles.Length : 0;
+    public int CountOfFolders => arrayOfFolders.Length;
+    public int CountOfFiles => arrayOfFiles.Length;
     public void ChangeFolder(string direction)
     {
         try
