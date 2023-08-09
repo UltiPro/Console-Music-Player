@@ -56,7 +56,7 @@ class DirectoryFileManager
         else
         {
             List<string> drives = Directory.GetLogicalDrives().ToList();
-            drives.Remove(Path.Substring(0, 3));
+            drives.Remove(path.Substring(0, 3));
             outFolders = drives.Concat(outFolders).ToList();
         }
         arrayOfFolders = outFolders.ToArray();
