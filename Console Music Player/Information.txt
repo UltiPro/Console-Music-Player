@@ -10,24 +10,24 @@
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
-Up Arrow -> Scroll Folder Up
-Down Arrow -> Scroll Folder Down
-Left Arrow -> Scroll File Up
-Right Arrow -> Scroll File Down
-Enter -> Choose Folder (goes into selected folder)
-Spacebar -> Choose File (starts selected track)
-F1 -> Mute
-F2 -> Volume Down
-F3 -> Volume Up
-F4 -> Unmute
-F5 -> Previous track (if the track lasts more than 2 seconds it starts again, otherwise it jumps to 
-                      the previous track or the last one in the list if there are no more tracks to pass)
-F6 -> Skip Back (-10 seconds of current track)
-F7 -> Pause/Play
-F8 -> Skip Forward (+10 seconds of current track)
-F9 -> Next Track (jumps to the next track or the first one in the list if there are no more tracks to pass)
-I -> THIS File
-Escape -> Turn Off Application
+Up Arrow -> Scrolls Selected Folder Up
+Down Arrow -> Scrolls Selected Folder Down
+Left Arrow -> Scrolls Selected File Up
+Right Arrow -> Scrolls Selected File Down
+Enter -> Chooses Folder (goes into selected folder)
+Spacebar -> Chooses File (starts selected track)
+F1 -> Mutes
+F2 -> Decreases Volume (-1%)
+F3 -> Increases Volume (+1%)
+F4 -> Unmutes
+F5 -> Skips To Previous Track (if the track lasts more than 2 seconds it starts again, otherwise it jumps to the 
+                               previous track or the last one in the list if there are no more tracks to pass)
+F6 -> Rewinds Track (-10 seconds)
+F7 -> Pauses/Plays
+F8 -> Forwards Track (+10 seconds)
+F9 -> Skips To Next Track (jumps to the next track or the first one in the list if there are no more tracks to pass)
+I -> Opens THIS File
+Escape -> Turns Off Application
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
