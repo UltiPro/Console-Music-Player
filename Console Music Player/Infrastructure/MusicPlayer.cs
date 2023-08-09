@@ -11,7 +11,6 @@ class MusicPlayer
     {
         this.musicConsole = musicConsole;
         windowsMediaPlayer = new WindowsMediaPlayer();
-        windowsMediaPlayer.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(TrackEnded);
         windowsMediaPlayer.settings.volume = startVolume;
     }
     public string TrackPath => windowsMediaPlayer.URL;
@@ -31,6 +30,7 @@ class MusicPlayer
             windowsMediaPlayer.close();
             windowsMediaPlayer = new WindowsMediaPlayer();
             windowsMediaPlayer.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(TrackEnded);
+            windowsMediaPlayer.MediaError += new _WMPOCXEvents_MediaErrorEventHandler(TrackLost);
             windowsMediaPlayer.settings.volume = oldVolume;
             windowsMediaPlayer.settings.mute = oldMute;
             windowsMediaPlayer.URL = path;
@@ -88,5 +88,10 @@ class MusicPlayer
                 Start(musicConsole.DirectoryFileManager.ArrayOfFiles[musicConsole.currentFileIdx]);
             }
         }
+    }
+    private void TrackLost(object mediaObject)
+    {
+        windowsMediaPlayer.controls.pause();
+        musicConsole.nowPlaying = false;
     }
 }
