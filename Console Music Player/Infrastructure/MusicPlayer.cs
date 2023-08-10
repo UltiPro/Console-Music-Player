@@ -22,7 +22,7 @@ class MusicPlayer
     }
     public string TrackPath => windowsMediaPlayerMain.URL;
     public string TrackDuration => windowsMediaPlayerMain.currentMedia != null ? windowsMediaPlayerMain.currentMedia.durationString : "00:00";
-    public string TrackCurrentDuration => windowsMediaPlayerMain.controls.currentPositionString;
+    public string TrackCurrentDuration => windowsMediaPlayerMain.controls.currentPositionString != "" ? windowsMediaPlayerMain.controls.currentPositionString : "--:--";
     public short PlayerVolume => (short)windowsMediaPlayerMain.settings.volume;
     public bool IsLoaded => windowsMediaPlayerMain.currentMedia != null ? (windowsMediaPlayerMain.currentMedia.duration > 0d ? true : false) : false;
     public bool IsPlayerMute => windowsMediaPlayerMain.settings.mute;
