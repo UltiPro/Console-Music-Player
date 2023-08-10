@@ -208,6 +208,7 @@ class MusicConsole
                     }
                     currentFileIdx = (currentFileIdx - 1) < 0 ? directoryFileManager.CountOfFiles - 1 : --currentFileIdx;
                     musicPlayer.Start(directoryFileManager.ArrayOfFiles[currentFileIdx]);
+                    Thread.Sleep(200);
                     break;
                 case ConsoleKey.F6:
                     musicPlayer.RewindTrack(-10);
@@ -233,6 +234,7 @@ class MusicConsole
                     if (currentFileIdx == -2) continue;
                     currentFileIdx = (currentFileIdx + 1) < directoryFileManager.CountOfFiles ? ++currentFileIdx : 0;
                     musicPlayer.Start(directoryFileManager.ArrayOfFiles[currentFileIdx]);
+                    Thread.Sleep(200);
                     break;
                 case ConsoleKey.I:
                     try
