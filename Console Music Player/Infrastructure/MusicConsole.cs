@@ -11,7 +11,6 @@ class MusicConsole
     private MusicPlayer musicPlayer;
     private Thread threadTimer, threadAnimation, threadAnimation2;
     private char[,] console;
-    private int[] consoleAnimation;
     private readonly char[] walls = { '═', '║', '╔', '╗', '╚', '╝', '╠', '╣', '╦', '╩', '╬' };
     private readonly char[] arrows = { '▲', '▼' };
     private readonly char[] dots = { '●', '○' };
@@ -113,7 +112,6 @@ class MusicConsole
         heightOfWindow3_4_p6 = heightOfWindow3_4 + 6;
         heightOfWindow3_4_p7 = heightOfWindow3_4 + 7;
         heightOfWindow3_4_p8 = heightOfWindow3_4 + 8;
-        consoleAnimation = new int[widthOfWindow1_2_m4];
         currentFolderIdx = 0;
         currentFileIdx = currentFileIdxMemory = -2;
         if (directoryFileManager.CountOfFiles > 0) cursorFileIdx = 0;
@@ -428,23 +426,21 @@ class MusicConsole
                 if (nowPlaying)
                 {
                     changedMode = true;
-                    for (int i = 0; i < consoleAnimation.Length; i++) consoleAnimation[i] = rnd.Next(0, heightOfWindow3_4_m9);
-                    z = 0;
                     for (int i = widthOfWindow1_4_p2; i < endWidthOfAnimation; i++)
                     {
+                        z = rnd.Next(8, heightOfWindow3_4_m1);
                         for (int j = heightOfWindow3_4_m4; j > 5; j--)
                         {
-                            if (j > 8 + consoleAnimation[z]) console[i, j] = dots[0];
+                            if (j > z) console[i, j] = dots[0];
                             else console[i, j] = ' ';
                         }
-                        z++;
                     }
                     UpdateConsoleBlock(widthOfWindow1_4_p2, 6, widthOfWindow1_2_m4, heightOfWindow3_4_m9, null, null);
                 }
                 else if (changedMode)
                 {
                     changedMode = false;
-                    BoxClear(widthOfWindow1_4_p1, 3, widthOfWindow1_2_m2, heightOfWindow3_4_m3);
+                    BoxClear(widthOfWindow1_4_p2, 6, widthOfWindow1_2_m4, heightOfWindow3_4_m9);
                     StringWriter(infoText, infoTextStartX, infoTextStartY, widthOfWindow1_2_m2, 1, false);
                     UpdateConsoleBlock(widthOfWindow1_4_p2, 6, widthOfWindow1_2_m4, heightOfWindow3_4_m9, null, null);
                 }
