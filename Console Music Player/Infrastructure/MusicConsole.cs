@@ -51,7 +51,7 @@ class MusicConsole
         }
         try
         {
-            using (StreamReader settingsFile = new(AppContext.BaseDirectory + "/settings"))
+            using (StreamReader settingsFile = new(AppContext.BaseDirectory + "/Settings"))
             {
                 directoryFileManager = new DirectoryFileManager(settingsFile.ReadLine());
                 short tempVolume;
@@ -249,7 +249,7 @@ class MusicConsole
                 case ConsoleKey.Escape:
                     try
                     {
-                        using (StreamWriter settingsFile = new(AppContext.BaseDirectory + "/settings", false))
+                        using (StreamWriter settingsFile = new(AppContext.BaseDirectory + "/Settings", false))
                         {
                             settingsFile.WriteLine(directoryFileManager.Path);
                             settingsFile.WriteLine(musicPlayer.PlayerVolume.ToString());
