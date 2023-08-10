@@ -5,50 +5,44 @@ namespace MusicPlayerTool;
 
 class MusicPlayer
 {
-    private WindowsMediaPlayer windowsMediaPlayer;
+    private WindowsMediaPlayer windowsMediaPlayerMain, windowsMediaPlayerHelper;
+    private WindowsMediaPlayer? windowsMediaPlayerBufor;
     private MusicConsole musicConsole;
     public MusicPlayer(MusicConsole musicConsole, short startVolume = 100)
     {
         this.musicConsole = musicConsole;
-        windowsMediaPlayer = new WindowsMediaPlayer();
-        windowsMediaPlayer.settings.volume = startVolume;
+        windowsMediaPlayerMain = new WindowsMediaPlayer();
+        windowsMediaPlayerMain.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(TrackEnded);
+        windowsMediaPlayerMain.MediaError += new _WMPOCXEvents_MediaErrorEventHandler(TrackLost);
+        windowsMediaPlayerMain.settings.volume = startVolume;
+        windowsMediaPlayerHelper = new WindowsMediaPlayer();
+        windowsMediaPlayerHelper.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(TrackEnded);
+        windowsMediaPlayerHelper.MediaError += new _WMPOCXEvents_MediaErrorEventHandler(TrackLost);
+        windowsMediaPlayerHelper.settings.volume = startVolume;
     }
-    public string TrackPath => windowsMediaPlayer.URL;
-    public string TrackDuration => windowsMediaPlayer.currentMedia != null ? windowsMediaPlayer.currentMedia.durationString : "00:00";
-    public string TrackCurrentDuration => windowsMediaPlayer.controls.currentPositionString;
-    public short PlayerVolume => (short)windowsMediaPlayer.settings.volume;
-    public bool IsLoaded => windowsMediaPlayer.currentMedia != null ? (windowsMediaPlayer.currentMedia.duration > 0d ? true : false) : false;
-    public bool IsPlayerMute => windowsMediaPlayer.settings.mute;
-    public bool IsPlayerJustStarted => windowsMediaPlayer.controls.currentPosition < 2.0d ? true : false;
+    public string TrackPath => windowsMediaPlayerMain.URL;
+    public string TrackDuration => windowsMediaPlayerMain.currentMedia != null ? windowsMediaPlayerMain.currentMedia.durationString : "00:00";
+    public string TrackCurrentDuration => windowsMediaPlayerMain.controls.currentPositionString;
+    public short PlayerVolume => (short)windowsMediaPlayerMain.settings.volume;
+    public bool IsLoaded => windowsMediaPlayerMain.currentMedia != null ? (windowsMediaPlayerMain.currentMedia.duration > 0d ? true : false) : false;
+    public bool IsPlayerMute => windowsMediaPlayerMain.settings.mute;
+    public bool IsPlayerJustStarted => windowsMediaPlayerMain.controls.currentPosition < 2.0d ? true : false;
     public void Start(string path)
     {
-        windowsMediaPlayer.controls.stop();
+        windowsMediaPlayerMain.controls.stop();
         if (File.Exists(path))
         {
-            short oldVolume = (short)windowsMediaPlayer.settings.volume;
-            bool oldMute = windowsMediaPlayer.settings.mute;
-            windowsMediaPlayer.close();
-            windowsMediaPlayer = new WindowsMediaPlayer();
-            windowsMediaPlayer.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(TrackEnded);
-            windowsMediaPlayer.MediaError += new _WMPOCXEvents_MediaErrorEventHandler(TrackLost);
-            windowsMediaPlayer.settings.volume = oldVolume;
-            windowsMediaPlayer.settings.mute = oldMute;
-            windowsMediaPlayer.URL = path;
-            windowsMediaPlayer.controls.play();
+            windowsMediaPlayerMain.URL = musicConsole.DirectoryFileManager.Path + "\\" + path;
+            RewindTrack(double.MinValue);
+            windowsMediaPlayerMain.controls.play();
             musicConsole.nowPlaying = true;
         }
         else
         {
-            bool changedFolder = musicConsole.DirectoryFileManager.Refresh();
             musicConsole.nowPlaying = false;
+            bool changedFolder = musicConsole.DirectoryFileManager.Refresh();
             if (changedFolder || musicConsole.DirectoryFileManager.CountOfFiles == 0)
             {
-                short oldVolume = (short)windowsMediaPlayer.settings.volume;
-                bool oldMute = windowsMediaPlayer.settings.mute;
-                windowsMediaPlayer.close();
-                windowsMediaPlayer = new WindowsMediaPlayer();
-                windowsMediaPlayer.settings.volume = oldVolume;
-                windowsMediaPlayer.settings.mute = oldMute;
                 if (changedFolder)
                 {
                     musicConsole.currentFolderIdx = 0;
@@ -68,15 +62,24 @@ class MusicPlayer
         musicConsole.UpdateFiles();
         musicConsole.UpdateTrack();
     }
-    public void Pause() => windowsMediaPlayer.controls.pause();
-    public void Play() => windowsMediaPlayer.controls.play();
+    public void Pause() => windowsMediaPlayerMain.controls.pause();
+    public void Play() => windowsMediaPlayerMain.controls.play();
     public void ChangeVolume(short count)
     {
-        windowsMediaPlayer.settings.mute = false;
-        windowsMediaPlayer.settings.volume += count;
+        windowsMediaPlayerMain.settings.mute = false;
+        windowsMediaPlayerHelper.settings.mute = false;
+        windowsMediaPlayerMain.settings.volume += count;
+        windowsMediaPlayerHelper.settings.volume += count;
     }
-    public void ChangeMute(bool value) => windowsMediaPlayer.settings.mute = value;
-    public void RewindTrack(double count) => windowsMediaPlayer.controls.currentPosition += count;
+    public void ChangeMute(bool value) => windowsMediaPlayerMain.settings.mute = windowsMediaPlayerHelper.settings.mute = value;
+    public void RewindTrack(double count)
+    {
+        try
+        {
+            windowsMediaPlayerMain.controls.currentPosition += count;
+        }
+        catch (Exception) { }
+    }
     private void TrackEnded(int state)
     {
         if (state == (int)WMPPlayState.wmppsMediaEnded)
@@ -85,13 +88,17 @@ class MusicPlayer
             if (musicConsole.currentFileIdx != -2)
             {
                 musicConsole.currentFileIdx = (musicConsole.currentFileIdx + 1) < musicConsole.DirectoryFileManager.CountOfFiles ? ++musicConsole.currentFileIdx : 0;
+                windowsMediaPlayerBufor = windowsMediaPlayerMain;
+                windowsMediaPlayerMain = windowsMediaPlayerHelper;
+                windowsMediaPlayerHelper = windowsMediaPlayerBufor;
+                windowsMediaPlayerHelper.URL = null;
                 Start(musicConsole.DirectoryFileManager.ArrayOfFiles[musicConsole.currentFileIdx]);
             }
         }
     }
     private void TrackLost(object mediaObject)
     {
-        windowsMediaPlayer.controls.pause();
+        windowsMediaPlayerMain.controls.pause();
         musicConsole.nowPlaying = false;
     }
 }
