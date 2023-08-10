@@ -12,10 +12,10 @@ class MusicConsole
     private Thread threadTimer, threadAnimation, threadAnimation2;
     private char[,] console;
     private int[] consoleAnimation;
-    private char[] walls = { '═', '║', '╔', '╗', '╚', '╝', '╠', '╣', '╦', '╩', '╬' };
-    private char[] arrows = { '▲', '▼' };
-    private char[] dots = { '●', '○' };
-    private char[] notes = { '♪', '♫' };
+    private readonly char[] walls = { '═', '║', '╔', '╗', '╚', '╝', '╠', '╣', '╦', '╩', '╬' };
+    private readonly char[] arrows = { '▲', '▼' };
+    private readonly char[] dots = { '●', '○' };
+    private readonly char[] notes = { '♪', '♫' };
     private readonly int widthOfWindow, widthOfWindow_m1, widthOfWindow_m2;
     private readonly int widthOfWindow1_8;
     private readonly int widthOfWindow1_4, widthOfWindow1_4_m1, widthOfWindow1_4_m2, widthOfWindow1_4_p1, widthOfWindow1_4_p2;
@@ -213,6 +213,7 @@ class MusicConsole
                     break;
                 case ConsoleKey.F6:
                     musicPlayer.RewindTrack(-10);
+                    Thread.Sleep(500);
                     break;
                 case ConsoleKey.F7:
                     if (nowPlaying)
@@ -228,6 +229,7 @@ class MusicConsole
                     break;
                 case ConsoleKey.F8:
                     musicPlayer.RewindTrack(10);
+                    Thread.Sleep(500);
                     break;
                 case ConsoleKey.F9:
                     if (currentFileIdx == -2) continue;
@@ -282,7 +284,6 @@ class MusicConsole
             for (int i = 0; i < widthOfWindow1_2_m10; i++) Console.Write(" ");
             Console.Write("Console Music Player");
         }
-        Console.Write("\n\n\n");
         string pressButton = "<<< Press Any Button To Continue >>>";
         Console.SetCursorPosition(widthOfWindow1_2 - (pressButton.Length / 2), 24);
         Console.Write(pressButton);
@@ -405,7 +406,7 @@ class MusicConsole
             try
             {
                 BoxClear(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1);
-                string outText = "<<< " + (musicPlayer.TrackCurrentDuration != "" ? musicPlayer.TrackCurrentDuration : "--:--") + " | " + musicPlayer.TrackDuration + " >>>";
+                string outText = "<<< " + musicPlayer.TrackCurrentDuration + " | " + musicPlayer.TrackDuration + " >>>";
                 StringWriter(outText, widthOfWindow1_2_m10, heightOfWindow3_4_m2, widthOfWindow1_2_m1, 1, false);
                 UpdateConsoleBlock(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1, null, null);
                 Thread.Sleep(200);
@@ -417,7 +418,7 @@ class MusicConsole
     {
         Random rnd = new Random();
         string infoText = "PAUSED: Resume Or Select New Track";
-        int z, widthOfAnimation = widthOfWindow1_4_p2 + widthOfWindow1_2_m4;
+        int z, endWidthOfAnimation = widthOfWindow1_4_p2 + widthOfWindow1_2_m4;
         int infoTextStartX = widthOfWindow1_2 - (infoText.Length / 2), infoTextStartY = heightOfWindow3_4 / 2;
         bool changedMode = true;
         while (launchApp)
@@ -429,7 +430,7 @@ class MusicConsole
                     changedMode = true;
                     for (int i = 0; i < consoleAnimation.Length; i++) consoleAnimation[i] = rnd.Next(0, heightOfWindow3_4_m9);
                     z = 0;
-                    for (int i = widthOfWindow1_4_p2; i < widthOfAnimation; i++)
+                    for (int i = widthOfWindow1_4_p2; i < endWidthOfAnimation; i++)
                     {
                         for (int j = heightOfWindow3_4_m4; j > 5; j--)
                         {
@@ -445,7 +446,7 @@ class MusicConsole
                     changedMode = false;
                     BoxClear(widthOfWindow1_4_p1, 3, widthOfWindow1_2_m2, heightOfWindow3_4_m3);
                     StringWriter(infoText, infoTextStartX, infoTextStartY, widthOfWindow1_2_m2, 1, false);
-                    UpdateConsoleBlock(widthOfWindow1_4_p1, 0, widthOfWindow1_2_m2, heightOfWindow3_4_m3, null, null);
+                    UpdateConsoleBlock(widthOfWindow1_4_p2, 6, widthOfWindow1_2_m4, heightOfWindow3_4_m9, null, null);
                 }
                 Thread.Sleep(200);
             }
