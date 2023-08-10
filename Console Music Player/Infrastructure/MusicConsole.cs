@@ -281,8 +281,9 @@ class MusicConsole
         }
         catch (Exception)
         {
-            for (int i = 0; i < widthOfWindow1_2_m10; i++) Console.Write(" ");
-            Console.Write("Console Music Player");
+            string titleLogo = "Console Music Player";
+            Console.SetCursorPosition(widthOfWindow1_2 - (titleLogo.Length / 2), 14);
+            Console.Write(titleLogo);
         }
         string pressButton = "<<< Press Any Button To Continue >>>";
         Console.SetCursorPosition(widthOfWindow1_2 - (pressButton.Length / 2), 24);
@@ -390,7 +391,7 @@ class MusicConsole
     public void UpdateTrack()
     {
         string trackToDisplay = "Choose new track...";
-        if (directoryFileManager.CountOfFiles > 0 && currentFileIdx != -2)
+        if (currentFileIdx != -2)
         {
             trackToDisplay = directoryFileManager.ArrayOfFiles[currentFileIdx].Remove(directoryFileManager.ArrayOfFiles[currentFileIdx].Length - 4);
             if (trackToDisplay.Length > widthOfWindow1_2_m3) trackToDisplay = trackToDisplay.Substring(0, widthOfWindow1_2_m8) + " ...";
@@ -406,8 +407,7 @@ class MusicConsole
             try
             {
                 BoxClear(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1);
-                string outText = "<<< " + musicPlayer.TrackCurrentDuration + " | " + musicPlayer.TrackDuration + " >>>";
-                StringWriter(outText, widthOfWindow1_2_m10, heightOfWindow3_4_m2, widthOfWindow1_2_m1, 1, false);
+                StringWriter("<<< " + musicPlayer.TrackCurrentDuration + " | " + musicPlayer.TrackDuration + " >>>", widthOfWindow1_2_m10, heightOfWindow3_4_m2, widthOfWindow1_2_m1, 1, false);
                 UpdateConsoleBlock(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1, null, null);
                 Thread.Sleep(200);
             }
@@ -456,13 +456,14 @@ class MusicConsole
     private void UpdateAnimation2()
     {
         Random rnd = new Random();
+        int col;
         while (launchApp)
         {
             try
             {
                 if (nowPlaying)
                 {
-                    int col = rnd.Next(0, 10) + widthOfWindow1_4_p1;
+                    col = rnd.Next(0, 10) + widthOfWindow1_4_p1;
                     while (col <= widthOfWindow3_4_m2)
                     {
                         console[col, heightOfWindow3_4_p5] = notes[col % 2];
