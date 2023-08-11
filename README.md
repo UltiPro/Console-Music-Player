@@ -39,4 +39,4 @@ Ready to use program:
 
 ![Main Screen 3 Preview](/screenshots/MainScreen3.png)
 
-![Application Usage Preview](/screenshots/ApplicationUsage.gif)
+![Main Screen 4 Preview](/screenshots/MainScreen4.png)
