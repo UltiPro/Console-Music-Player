@@ -13,21 +13,21 @@ Dependencies:
 
 Running:
 
-> "/Console Music Player/"
+> /Console Music Player/
 
 > dotnet run
 
 Publish:
 
-> "/Console Music Player/"
+> /Console Music Player/
 
 > dotnet publish
 
-> "/Console Music Player/bin/Debug/net6.0/publish/"
+> /Console Music Player/bin/Debug/net6.0/publish/
 
-Ready Program:
+Ready to use program:
 
-> "/Console Music Player.zip"
+> /Console Music Player.zip
 
 # Preview
 
