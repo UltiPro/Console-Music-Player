@@ -324,7 +324,6 @@ class MusicConsole
         StringWriter("PATH", widthOfWindow1_8 - 2, 1, widthOfWindow1_4_m2, 1, false);
         StringWriter("OTHER LOCATIONS", widthOfWindow1_8 - 8, 7, widthOfWindow1_4_m2, 1, false);
         StringWriter("Choose first track...", widthOfWindow1_2_m11, 1, widthOfWindow1_2_m1, 1, false);
-        StringWriter("Choose first track...", widthOfWindow1_2_m11, heightOfWindow3_4_m2, widthOfWindow1_2_m1, 1, false);
         StringWriter("FILES", widthOfWindow_m_widthOfWindow1_8_m3, 1, widthOfWindow1_4_m2, 1, false);
         StringWriter("FOLDER & FILE CONTROLS", widthOfWindow1_8 - 11, heightOfWindow3_4_p1, widthOfWindow1_4_m2, 1, false);
         StringWriter("Arrow Up    | Folder Up", 2, heightOfWindow3_4_p3, widthOfWindow1_4_m2, 1, false);
@@ -361,18 +360,18 @@ class MusicConsole
         string newPath = directoryFileManager.Path;
         if (!(newPath[newPath.Length - 1] == '\\')) newPath += "\\";
         StringWriter(newPath, 1, 3, widthOfWindow1_4_m2, 3, true);
-        UpdateConsoleBlock(1, 3, widthOfWindow1_4_m2, 3, null, null);
+        UpdateConsoleBlock(1, 3, widthOfWindow1_4_m2, 3);
     }
     public void UpdateFolders()
     {
         ListWriter(directoryFileManager.ArrayOfFolders.Skip(currentFolderIdx / heightOfWindow3_4_m12 * heightOfWindow3_4_m12).Take(heightOfWindow3_4_m12).ToArray(), 1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, true);
-        UpdateConsoleBlock(1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, (currentFolderIdx % heightOfWindow3_4_m12), null);
+        UpdateConsoleBlockWithHighlights(1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, (currentFolderIdx % heightOfWindow3_4_m12), null);
     }
     public void UpdateFiles()
     {
         int skipFilesMultiplication = cursorFileIdx / heightOfWindow3_4_m6 * heightOfWindow3_4_m6;
         ListWriter(directoryFileManager.ArrayOfFiles.Skip(skipFilesMultiplication).Take(heightOfWindow3_4_m6).ToArray(), widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, false);
-        UpdateConsoleBlock(widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, (cursorFileIdx % heightOfWindow3_4_m6), (currentFileIdx >= skipFilesMultiplication && currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7) ? (currentFileIdx % heightOfWindow3_4_m6) : null);
+        UpdateConsoleBlockWithHighlights(widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, (cursorFileIdx % heightOfWindow3_4_m6), (currentFileIdx >= skipFilesMultiplication && currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7) ? (currentFileIdx % heightOfWindow3_4_m6) : null);
     }
     private void UpdateVolume()
     {
@@ -386,7 +385,7 @@ class MusicConsole
         }
         volumeDisplay = volumeDisplay.Remove(volumeDisplay.Length - 1) + "]  " + (musicPlayer.IsPlayerMute ? 0 : musicPlayer.PlayerVolume) + " %";
         StringWriter(volumeDisplay, widthOfWindow3_4_p1, heightOfWindow3_4_p3, widthOfWindow1_4_m2, 1, true);
-        UpdateConsoleBlock(widthOfWindow3_4_p1, heightOfWindow3_4_p3, widthOfWindow1_4_m2, 1, null, null);
+        UpdateConsoleBlock(widthOfWindow3_4_p1, heightOfWindow3_4_p3, widthOfWindow1_4_m2, 1);
     }
     public void UpdateTrack()
     {
@@ -398,7 +397,7 @@ class MusicConsole
         }
         BoxClear(widthOfWindow1_4_p1, 1, widthOfWindow1_2_m1, 1);
         StringWriter(trackToDisplay, widthOfWindow1_2 - (trackToDisplay.Length / 2), 1, widthOfWindow1_2_m1, 1, false);
-        UpdateConsoleBlock(widthOfWindow1_4, 1, widthOfWindow1_2_m1, 1, null, null);
+        UpdateConsoleBlock(widthOfWindow1_4, 1, widthOfWindow1_2_m1, 1);
     }
     private void UpdateTimer()
     {
@@ -408,7 +407,7 @@ class MusicConsole
             {
                 BoxClear(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1);
                 StringWriter("<<< " + musicPlayer.TrackCurrentDuration + " | " + musicPlayer.TrackDuration + " >>>", widthOfWindow1_2_m10, heightOfWindow3_4_m2, widthOfWindow1_2_m1, 1, false);
-                UpdateConsoleBlock(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1, null, null);
+                UpdateConsoleBlock(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1);
                 Thread.Sleep(200);
             }
             catch (Exception) { }
@@ -437,14 +436,14 @@ class MusicConsole
                             else console[i, j] = ' ';
                         }
                     }
-                    UpdateConsoleBlock(widthOfWindow1_4_p2, 6, widthOfWindow1_2_m4, heightOfWindow3_4_m9, null, null);
+                    UpdateConsoleBlock(widthOfWindow1_4_p2, 6, widthOfWindow1_2_m4, heightOfWindow3_4_m9);
                 }
                 else if (changedMode)
                 {
                     changedMode = false;
                     BoxClear(widthOfWindow1_4_p2, 6, widthOfWindow1_2_m4, heightOfWindow3_4_m9);
                     StringWriter(infoText, infoTextStartX, infoTextStartY, widthOfWindow1_2_m2, 1, false);
-                    UpdateConsoleBlock(widthOfWindow1_4_p2, 6, widthOfWindow1_2_m4, heightOfWindow3_4_m9, null, null);
+                    UpdateConsoleBlock(widthOfWindow1_4_p2, 6, widthOfWindow1_2_m4, heightOfWindow3_4_m9);
                 }
                 Thread.Sleep(200);
             }
@@ -473,7 +472,7 @@ class MusicConsole
                         console[col, heightOfWindow3_4_p6] = notes[col % 2];
                         col += rnd.Next(0, 10);
                     }
-                    UpdateConsoleBlock(widthOfWindow1_4, heightOfWindow3_4_p5, widthOfWindow1_2, 2, null, null);
+                    UpdateConsoleBlock(widthOfWindow1_4, heightOfWindow3_4_p5, widthOfWindow1_2, 2);
                     BoxClear(widthOfWindow1_4, heightOfWindow3_4_p5, widthOfWindow1_2, 2);
                 }
                 Thread.Sleep(200);
@@ -583,7 +582,21 @@ class MusicConsole
         if (heightOfBlock != 0) startY += heightOfBlock;
         for (int i = startX; i < lsX; i++) console[i, startY] = arrows[1];
     }
-    private void UpdateConsoleBlock(int startX, int startY, int lengthOfBlock, int heightOfBlock, int? selectedItem, int? selectedItem2)
+    private void UpdateConsoleBlock(int startX, int startY, int lengthOfBlock, int heightOfBlock)
+    {
+        lock (console)
+        {
+            for (int i = startY; i < heightOfBlock + startY; i++)
+            {
+                for (int j = startX; j < lengthOfBlock + startX; j++)
+                {
+                    Console.SetCursorPosition(j, i);
+                    Console.Write(console[j, i]);
+                }
+            }
+        }
+    }
+    private void UpdateConsoleBlockWithHighlights(int startX, int startY, int lengthOfBlock, int heightOfBlock, int? selectedItem, int? selectedItem2)
     {
         lock (console)
         {
