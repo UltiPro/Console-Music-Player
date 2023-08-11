@@ -13,19 +13,19 @@ Dependencies:
 
 Run:
 
-> cd /Console Music Player/
+> cd "/Console Music Player"
 
 > dotnet run
 
 Publish:
 
-> cd /Console Music Player/
+> cd "/Console Music Player"
 
 > dotnet publish
 
-> cd /Console Music Player/bin/Debug/net6.0/publish/
+> cd "/bin/Debug/net6.0/publish"
 
-Ready to use program:
+Ready to use program in:
 
 > Console Music Player.zip
 
