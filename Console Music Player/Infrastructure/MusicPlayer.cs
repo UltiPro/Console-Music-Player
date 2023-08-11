@@ -8,6 +8,8 @@ class MusicPlayer
     private WindowsMediaPlayer windowsMediaPlayerMain, windowsMediaPlayerHelper;
     private WindowsMediaPlayer? windowsMediaPlayerBufor;
     private MusicConsole musicConsole;
+    private bool errorOccured;
+    public bool ErrorOccured => errorOccured;
     public MusicPlayer(MusicConsole musicConsole, short startVolume = 100)
     {
         this.musicConsole = musicConsole;
@@ -19,6 +21,7 @@ class MusicPlayer
         windowsMediaPlayerHelper.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(TrackEnded);
         windowsMediaPlayerHelper.MediaError += new _WMPOCXEvents_MediaErrorEventHandler(TrackLost);
         windowsMediaPlayerHelper.settings.volume = startVolume;
+        errorOccured = false;
     }
     public string TrackPath => windowsMediaPlayerMain.URL;
     public string TrackDuration => windowsMediaPlayerMain.currentMedia != null ? windowsMediaPlayerMain.currentMedia.durationString : "00:00";
@@ -36,6 +39,7 @@ class MusicPlayer
             RewindTrack(double.MinValue);
             windowsMediaPlayerMain.controls.play();
             musicConsole.nowPlaying = true;
+            errorOccured = false;
         }
         else
         {
@@ -100,5 +104,6 @@ class MusicPlayer
     {
         windowsMediaPlayerMain.controls.pause();
         musicConsole.nowPlaying = false;
+        errorOccured = true;
     }
 }
