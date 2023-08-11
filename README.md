@@ -31,10 +31,12 @@ Ready to use program:
 
 # Preview
 
-![Welcome Screen]()
+![Welcome Screen Preview](WelcomeScreen.png)
 
-![Main Screen]()
+![Main Screen 1 Preview](MainScreen1.png)
 
-![Playing Main Screen]()
+![Main Screen 2 Preview](MainScreen2.png)
 
-![Short GIF Preview]()
+![Main Screen 3 Preview](MainScreen3.png)
+
+![Application GIF Preview]()
