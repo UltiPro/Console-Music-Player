@@ -221,7 +221,7 @@ class MusicConsole
                         musicPlayer.Pause();
                         nowPlaying = !nowPlaying;
                     }
-                    else if (!nowPlaying && musicPlayer.IsLoaded)
+                    else if (!nowPlaying && musicPlayer.IsLoaded && !musicPlayer.ErrorOccured)
                     {
                         musicPlayer.Play();
                         nowPlaying = !nowPlaying;
