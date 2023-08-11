@@ -11,13 +11,13 @@ Dependencies:
   <li>WMPLib</li>
 </ul>
 
-Run:
+Running the app:
 
 > cd "/Console Music Player"
 
 > dotnet run
 
-Publish:
+Publishing the app:
 
 > cd "/Console Music Player"
 
