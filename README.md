@@ -11,23 +11,23 @@ Dependencies:
   <li>WMPLib</li>
 </ul>
 
-Running:
+Run:
 
-> /Console Music Player/
+> cd /Console Music Player/
 
 > dotnet run
 
 Publish:
 
-> /Console Music Player/
+> cd /Console Music Player/
 
 > dotnet publish
 
-> /Console Music Player/bin/Debug/net6.0/publish/
+> cd /Console Music Player/bin/Debug/net6.0/publish/
 
 Ready to use program:
 
-> /Console Music Player.zip
+> Console Music Player.zip
 
 # Preview
 
