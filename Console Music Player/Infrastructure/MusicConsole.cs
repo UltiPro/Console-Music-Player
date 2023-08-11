@@ -18,7 +18,7 @@ class MusicConsole
     private readonly int widthOfWindow, widthOfWindow_m1, widthOfWindow_m2;
     private readonly int widthOfWindow1_8;
     private readonly int widthOfWindow1_4, widthOfWindow1_4_m1, widthOfWindow1_4_m2, widthOfWindow1_4_p1, widthOfWindow1_4_p2;
-    private readonly int widthOfWindow1_2, widthOfWindow1_2_m1, widthOfWindow1_2_m2, widthOfWindow1_2_m3, widthOfWindow1_2_m4, widthOfWindow1_2_m8, widthOfWindow1_2_m10, widthOfWindow1_2_m11, widthOfWindow1_2_p1;
+    private readonly int widthOfWindow1_2, widthOfWindow1_2_m1, widthOfWindow1_2_m2, widthOfWindow1_2_m3, widthOfWindow1_2_m4, widthOfWindow1_2_m8, widthOfWindow1_2_m9, widthOfWindow1_2_m10, widthOfWindow1_2_m11, widthOfWindow1_2_p1;
     private readonly int widthOfWindow3_4, widthOfWindow3_4_m2, widthOfWindow3_4_p1, widthOfWindow3_4_p2;
     private readonly int widthOfWindow_m_widthOfWindow1_8_m3;
     private readonly int heightOfWindow, heightOfWindow_m1;
@@ -82,6 +82,7 @@ class MusicConsole
         widthOfWindow1_2_m3 = widthOfWindow1_2 - 3;
         widthOfWindow1_2_m4 = widthOfWindow1_2 - 4;
         widthOfWindow1_2_m8 = widthOfWindow1_2 - 8;
+        widthOfWindow1_2_m9 = widthOfWindow1_2 - 9;
         widthOfWindow1_2_m10 = widthOfWindow1_2 - 10;
         widthOfWindow1_2_m11 = widthOfWindow1_2 - 11;
         widthOfWindow1_2_p1 = widthOfWindow1_2 + 1;
@@ -393,11 +394,20 @@ class MusicConsole
         if (currentFileIdx != -2)
         {
             trackToDisplay = directoryFileManager.ArrayOfFiles[currentFileIdx].Remove(directoryFileManager.ArrayOfFiles[currentFileIdx].Length - 4);
-            if (trackToDisplay.Length > widthOfWindow1_2_m3) trackToDisplay = trackToDisplay.Substring(0, widthOfWindow1_2_m8) + " ...";
+            if (trackToDisplay.Length > widthOfWindow1_2_m4) trackToDisplay = trackToDisplay.Substring(0, widthOfWindow1_2_m8) + " ...";
         }
-        BoxClear(widthOfWindow1_4_p1, 1, widthOfWindow1_2_m1, 1);
-        StringWriter(trackToDisplay, widthOfWindow1_2 - (trackToDisplay.Length / 2), 1, widthOfWindow1_2_m1, 1, false);
-        UpdateConsoleBlock(widthOfWindow1_4, 1, widthOfWindow1_2_m1, 1);
+        if (trackToDisplay.Length <= widthOfWindow1_2_m4)
+        {
+            int countOfWhiteSpaces = widthOfWindow1_2_m2 - trackToDisplay.Length;
+            if (countOfWhiteSpaces % 2 == 0) countOfWhiteSpaces = (countOfWhiteSpaces / 2) - 1;
+            else countOfWhiteSpaces = countOfWhiteSpaces / 2;
+            for (int i = 0; i < countOfWhiteSpaces; i++) trackToDisplay = " " + trackToDisplay + " ";
+        }
+        lock (console)
+        {
+            Console.SetCursorPosition(widthOfWindow1_4_p2, 1);
+            Console.Write(trackToDisplay);
+        }
     }
     private void UpdateTimer()
     {
@@ -405,9 +415,11 @@ class MusicConsole
         {
             try
             {
-                BoxClear(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1);
-                StringWriter("<<< " + musicPlayer.TrackCurrentDuration + " | " + musicPlayer.TrackDuration + " >>>", widthOfWindow1_2_m10, heightOfWindow3_4_m2, widthOfWindow1_2_m1, 1, false);
-                UpdateConsoleBlock(widthOfWindow1_4_p1, heightOfWindow3_4_m2, widthOfWindow1_2_m2, 1);
+                lock (console)
+                {
+                    Console.SetCursorPosition(widthOfWindow1_2_m9, heightOfWindow3_4_m2);
+                    Console.Write("<<< " + musicPlayer.TrackCurrentDuration + " | " + musicPlayer.TrackDuration + " >>>");
+                }
                 Thread.Sleep(200);
             }
             catch (Exception) { }
