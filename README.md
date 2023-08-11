@@ -8,7 +8,7 @@ Console application with all music and volume controls. In addition, there are i
 Dependencies:
 
 <ul>
-  <li>WMPLib</li>
+  <li>WMPLib 1.0.0</li>
 </ul>
 
 Running the app:
