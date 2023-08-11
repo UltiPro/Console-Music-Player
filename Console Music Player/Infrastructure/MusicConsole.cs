@@ -385,8 +385,16 @@ class MusicConsole
             for (int i = 0; i < 10 - volumeDots; i++) volumeDisplay += dots[1] + " ";
         }
         volumeDisplay = volumeDisplay.Remove(volumeDisplay.Length - 1) + "]  " + (musicPlayer.IsPlayerMute ? 0 : musicPlayer.PlayerVolume) + " %";
-        StringWriter(volumeDisplay, widthOfWindow3_4_p1, heightOfWindow3_4_p3, widthOfWindow1_4_m2, 1, true);
-        UpdateConsoleBlock(widthOfWindow3_4_p1, heightOfWindow3_4_p3, widthOfWindow1_4_m2, 1);
+        if (volumeDisplay.Length < widthOfWindow1_4_m2)
+        {
+            int countOfWhiteSpaces = widthOfWindow1_4_m2 - volumeDisplay.Length;
+            for (int i = 0; i < countOfWhiteSpaces; i++) volumeDisplay = volumeDisplay + " ";
+        }
+        lock (console)
+        {
+            Console.SetCursorPosition(widthOfWindow3_4_p1, heightOfWindow3_4_p3);
+            Console.Write(volumeDisplay);
+        }
     }
     public void UpdateTrack()
     {
