@@ -25,7 +25,7 @@ Publish:
 
 > cd "/bin/Debug/net6.0/publish"
 
-Ready to use program in:
+Compressed ready to use program:
 
 > Console Music Player.zip
 
