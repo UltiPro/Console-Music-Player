@@ -24,7 +24,7 @@ class MusicPlayer
         errorOccured = false;
     }
     public string TrackPath => windowsMediaPlayerMain.URL;
-    public string TrackDuration => windowsMediaPlayerMain.currentMedia != null ? windowsMediaPlayerMain.currentMedia.durationString : "00:00";
+    public string TrackDuration => windowsMediaPlayerMain.currentMedia != null && !errorOccured ? windowsMediaPlayerMain.currentMedia.durationString : "00:00";
     public string TrackCurrentDuration => windowsMediaPlayerMain.controls.currentPositionString != "" ? windowsMediaPlayerMain.controls.currentPositionString : "--:--";
     public short PlayerVolume => (short)windowsMediaPlayerMain.settings.volume;
     public bool IsLoaded => windowsMediaPlayerMain.currentMedia != null ? (windowsMediaPlayerMain.currentMedia.duration > 0d ? true : false) : false;
@@ -44,6 +44,7 @@ class MusicPlayer
         else
         {
             musicConsole.nowPlaying = false;
+            errorOccured = true;
             bool changedFolder = musicConsole.DirectoryFileManager.Refresh();
             if (changedFolder || musicConsole.DirectoryFileManager.CountOfFiles == 0)
             {
