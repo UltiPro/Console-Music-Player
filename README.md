@@ -40,3 +40,5 @@ Compressed ready to use program:
 ![Main Screen 3 Preview](/screenshots/MainScreen3.png)
 
 ![Main Screen 4 Preview](/screenshots/MainScreen4.png)
+
+![Main Screen Animation Preview](/screenshots/MainScreenAnimation.gif)
