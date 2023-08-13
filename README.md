@@ -1,7 +1,7 @@
 # Console-Music-Player
 Console Music Player created by Patryk 'UltiPro' Wójtowicz using .NET C#.
 
-Console application with volume and tracks controls. There are implemented transitions through folders and disks (in root of disk). Refreshing tracks, files and folders. Error handling in the absence of folders or files while the program is running. Automatic playback of songs in the order of the list (in the case of the end of the list, starting it again). Animations and remembering the last path and player volume. Application is dedicated for Windows OS (tested only on 10) and CMD (not Powershell). Project developed in .NET 6.
+Console application with volume and track controls. There are implemented transitions through files, folders and disks (in root of disk). Refreshing folders, files and tracks even error handling in the sudden absence of them. Automatic playback of songs in the order of the list (in the case of the end of the list, starting it again). Animations of playing music. Remembering the last path and player volume. Application is dedicated for Windows OS using CMD (not Powershell). Application tested only on Windows 10. Project developed in .NET 6. 
 
 # Dependencies and Usage
 
