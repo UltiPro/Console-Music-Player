@@ -372,23 +372,26 @@ class MusicConsole
             int skipFoldersMultiplication = currentFolderIdx / heightOfWindow3_4_m12 * heightOfWindow3_4_m12;
             ListWriter(directoryFileManager.ArrayOfFolders.Skip(skipFoldersMultiplication).Take(heightOfWindow3_4_m12).ToArray(), 1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, true);
             int? playingTrackFolderCursor = null;
-            if (musicPlayer.TrackPath.Contains(directoryFileManager.Path))
+            if(!musicPlayer.ErrorOccured)
             {
-                if (Path.GetDirectoryName(musicPlayer.TrackPath) == directoryFileManager.Path) playingTrackFolderCursor = null;
-                else
+                if (musicPlayer.TrackPath.Contains(directoryFileManager.Path))
                 {
-                    string find = musicPlayer.TrackPath.Substring(directoryFileManager.Path.Length);
-                    if (find.Substring(0, 1) == "\\") find = find.Substring(1);
-                    if (find.Contains("\\")) find = find.Substring(0, find.IndexOf("\\"));
-                    playingTrackFolderCursor = directoryFileManager.ArrayOfFolders.ToList().FindIndex(path => path == find);
+                    if (Path.GetDirectoryName(musicPlayer.TrackPath) == directoryFileManager.Path) playingTrackFolderCursor = null;
+                    else
+                    {
+                        string find = musicPlayer.TrackPath.Substring(directoryFileManager.Path.Length);
+                        if (find.Substring(0, 1) == "\\") find = find.Substring(1);
+                        if (find.Contains("\\")) find = find.Substring(0, find.IndexOf("\\"));
+                        playingTrackFolderCursor = directoryFileManager.ArrayOfFolders.ToList().FindIndex(path => path == find);
+                    }
                 }
+                else if (directoryFileManager.Path.Length == 3 && musicPlayer.TrackPath.Length > 0) playingTrackFolderCursor = directoryFileManager.ArrayOfFolders.ToList().FindIndex(path => path == musicPlayer.TrackPath.Substring(0, 3));
+                else if (musicPlayer.TrackPath != "") playingTrackFolderCursor = 0;
+                if (playingTrackFolderCursor >= skipFoldersMultiplication && playingTrackFolderCursor <= skipFoldersMultiplication + heightOfWindow3_4_m12) playingTrackFolderCursor = playingTrackFolderCursor % heightOfWindow3_4_m12;
+                else if (playingTrackFolderCursor >= skipFoldersMultiplication) playingTrackFolderCursor = heightOfWindow3_4_m12;
+                else if (playingTrackFolderCursor <= skipFoldersMultiplication + heightOfWindow3_4_m12) playingTrackFolderCursor = -1;
+                else playingTrackFolderCursor = null;
             }
-            else if (directoryFileManager.Path.Length == 3 && musicPlayer.TrackPath.Length > 0) playingTrackFolderCursor = directoryFileManager.ArrayOfFolders.ToList().FindIndex(path => path == musicPlayer.TrackPath.Substring(0, 3));
-            else if (musicPlayer.TrackPath != "") playingTrackFolderCursor = 0;
-            if (playingTrackFolderCursor >= skipFoldersMultiplication && playingTrackFolderCursor <= skipFoldersMultiplication + heightOfWindow3_4_m12) playingTrackFolderCursor = playingTrackFolderCursor % heightOfWindow3_4_m12;
-            else if (playingTrackFolderCursor >= skipFoldersMultiplication) playingTrackFolderCursor = heightOfWindow3_4_m12;
-            else if (playingTrackFolderCursor <= skipFoldersMultiplication + heightOfWindow3_4_m12) playingTrackFolderCursor = -1;
-            else playingTrackFolderCursor = null;
             UpdateConsoleBlockWithHighlights(1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, currentFolderIdx % heightOfWindow3_4_m12, playingTrackFolderCursor);
         }
         catch (Exception) { }
@@ -400,10 +403,13 @@ class MusicConsole
             int skipFilesMultiplication = cursorFileIdx / heightOfWindow3_4_m6 * heightOfWindow3_4_m6;
             ListWriter(directoryFileManager.ArrayOfFiles.Skip(skipFilesMultiplication).Take(heightOfWindow3_4_m6).ToArray(), widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, false);
             int? playingTrackFileCursor = null;
-            if (currentFileIdx >= skipFilesMultiplication && currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7) playingTrackFileCursor = currentFileIdx % heightOfWindow3_4_m6;
-            else if (currentFileIdx >= skipFilesMultiplication) playingTrackFileCursor = heightOfWindow3_4_m6;
-            else if (currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7 && currentFileIdx > 0) playingTrackFileCursor = -1;
-            else playingTrackFileCursor = null;
+            if(!musicPlayer.ErrorOccured) 
+            {
+                if (currentFileIdx >= skipFilesMultiplication && currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7) playingTrackFileCursor = currentFileIdx % heightOfWindow3_4_m6;
+                else if (currentFileIdx >= skipFilesMultiplication) playingTrackFileCursor = heightOfWindow3_4_m6;
+                else if (currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7 && currentFileIdx > 0) playingTrackFileCursor = -1;
+                else playingTrackFileCursor = null;
+            }
             UpdateConsoleBlockWithHighlights(widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, cursorFileIdx % heightOfWindow3_4_m6, playingTrackFileCursor);
         }
         catch (Exception) { }
@@ -433,7 +439,7 @@ class MusicConsole
     public void UpdateTrack()
     {
         string trackToDisplay = "Choose new track...";
-        if (currentFileIdx != -2)
+        if (currentFileIdx != -2 && !musicPlayer.ErrorOccured)
         {
             trackToDisplay = directoryFileManager.ArrayOfFiles[currentFileIdx].Remove(directoryFileManager.ArrayOfFiles[currentFileIdx].Length - 4);
             if (trackToDisplay.Length > widthOfWindow1_2_m4) trackToDisplay = trackToDisplay.Substring(0, widthOfWindow1_2_m8) + " ...";
