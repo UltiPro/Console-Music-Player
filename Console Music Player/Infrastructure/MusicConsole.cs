@@ -226,6 +226,8 @@ class MusicConsole
                         musicPlayer.Play();
                         nowPlaying = !nowPlaying;
                     }
+                    UpdateFiles();
+                    UpdateFolders();
                     break;
                 case ConsoleKey.F8:
                     musicPlayer.RewindTrack(10);
@@ -365,14 +367,38 @@ class MusicConsole
     }
     public void UpdateFolders()
     {
-        ListWriter(directoryFileManager.ArrayOfFolders.Skip(currentFolderIdx / heightOfWindow3_4_m12 * heightOfWindow3_4_m12).Take(heightOfWindow3_4_m12).ToArray(), 1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, true);
-        UpdateConsoleBlockWithHighlights(1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, (currentFolderIdx % heightOfWindow3_4_m12), null);
+        int skipFoldersMultiplication = currentFolderIdx / heightOfWindow3_4_m12 * heightOfWindow3_4_m12;
+        ListWriter(directoryFileManager.ArrayOfFolders.Skip(skipFoldersMultiplication).Take(heightOfWindow3_4_m12).ToArray(), 1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, true);
+        int? playingTrackFolderCursor = null;
+        if (musicPlayer.TrackPath.Contains(directoryFileManager.Path))
+        {
+            if (Path.GetDirectoryName(musicPlayer.TrackPath) == directoryFileManager.Path) playingTrackFolderCursor = null;
+            else
+            {
+                string find = musicPlayer.TrackPath.Substring(directoryFileManager.Path.Length);
+                if (find.Substring(0, 1) == "\\") find = find.Substring(1);
+                if (find.Contains("\\")) find = find.Substring(0, find.IndexOf("\\"));
+                playingTrackFolderCursor = directoryFileManager.ArrayOfFolders.ToList().FindIndex(path => path == find);
+            }
+        }
+        else if (directoryFileManager.Path.Length == 3 && musicPlayer.TrackPath.Length > 0) playingTrackFolderCursor = directoryFileManager.ArrayOfFolders.ToList().FindIndex(path => path == musicPlayer.TrackPath.Substring(0, 3));
+        else if (musicPlayer.TrackPath != "") playingTrackFolderCursor = 0;
+        if(playingTrackFolderCursor >= skipFoldersMultiplication && playingTrackFolderCursor <= skipFoldersMultiplication + heightOfWindow3_4_m12) playingTrackFolderCursor = playingTrackFolderCursor % heightOfWindow3_4_m12;
+        else if(playingTrackFolderCursor >= skipFoldersMultiplication) playingTrackFolderCursor = heightOfWindow3_4_m12;
+        else if(playingTrackFolderCursor <= skipFoldersMultiplication + heightOfWindow3_4_m12) playingTrackFolderCursor = -1;
+        else playingTrackFolderCursor = null;
+        UpdateConsoleBlockWithHighlights(1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, currentFolderIdx % heightOfWindow3_4_m12, playingTrackFolderCursor);
     }
     public void UpdateFiles()
     {
         int skipFilesMultiplication = cursorFileIdx / heightOfWindow3_4_m6 * heightOfWindow3_4_m6;
         ListWriter(directoryFileManager.ArrayOfFiles.Skip(skipFilesMultiplication).Take(heightOfWindow3_4_m6).ToArray(), widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, false);
-        UpdateConsoleBlockWithHighlights(widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, (cursorFileIdx % heightOfWindow3_4_m6), (currentFileIdx >= skipFilesMultiplication && currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7) ? (currentFileIdx % heightOfWindow3_4_m6) : null);
+        int? playingTrackFileCursor = null;
+        if (currentFileIdx >= skipFilesMultiplication && currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7) playingTrackFileCursor = currentFileIdx % heightOfWindow3_4_m6;
+        else if (currentFileIdx >= skipFilesMultiplication) playingTrackFileCursor = heightOfWindow3_4_m6;
+        else if (currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7 && currentFileIdx > 0) playingTrackFileCursor = -1;
+        else playingTrackFileCursor = null;
+        UpdateConsoleBlockWithHighlights(widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, cursorFileIdx % heightOfWindow3_4_m6, playingTrackFileCursor);
     }
     private void UpdateVolume()
     {
@@ -628,7 +654,8 @@ class MusicConsole
                 row = i - startY;
                 if (row == selectedItem2)
                 {
-                    Console.BackgroundColor = ConsoleColor.Green;
+                    if (nowPlaying) Console.BackgroundColor = ConsoleColor.Green;
+                    else Console.BackgroundColor = ConsoleColor.Red;
                     Console.ForegroundColor = ConsoleColor.White;
                 }
                 if (row == selectedItem)
