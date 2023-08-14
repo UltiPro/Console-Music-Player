@@ -367,38 +367,46 @@ class MusicConsole
     }
     public void UpdateFolders()
     {
-        int skipFoldersMultiplication = currentFolderIdx / heightOfWindow3_4_m12 * heightOfWindow3_4_m12;
-        ListWriter(directoryFileManager.ArrayOfFolders.Skip(skipFoldersMultiplication).Take(heightOfWindow3_4_m12).ToArray(), 1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, true);
-        int? playingTrackFolderCursor = null;
-        if (musicPlayer.TrackPath.Contains(directoryFileManager.Path))
+        try
         {
-            if (Path.GetDirectoryName(musicPlayer.TrackPath) == directoryFileManager.Path) playingTrackFolderCursor = null;
-            else
+            int skipFoldersMultiplication = currentFolderIdx / heightOfWindow3_4_m12 * heightOfWindow3_4_m12;
+            ListWriter(directoryFileManager.ArrayOfFolders.Skip(skipFoldersMultiplication).Take(heightOfWindow3_4_m12).ToArray(), 1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, true);
+            int? playingTrackFolderCursor = null;
+            if (musicPlayer.TrackPath.Contains(directoryFileManager.Path))
             {
-                string find = musicPlayer.TrackPath.Substring(directoryFileManager.Path.Length);
-                if (find.Substring(0, 1) == "\\") find = find.Substring(1);
-                if (find.Contains("\\")) find = find.Substring(0, find.IndexOf("\\"));
-                playingTrackFolderCursor = directoryFileManager.ArrayOfFolders.ToList().FindIndex(path => path == find);
+                if (Path.GetDirectoryName(musicPlayer.TrackPath) == directoryFileManager.Path) playingTrackFolderCursor = null;
+                else
+                {
+                    string find = musicPlayer.TrackPath.Substring(directoryFileManager.Path.Length);
+                    if (find.Substring(0, 1) == "\\") find = find.Substring(1);
+                    if (find.Contains("\\")) find = find.Substring(0, find.IndexOf("\\"));
+                    playingTrackFolderCursor = directoryFileManager.ArrayOfFolders.ToList().FindIndex(path => path == find);
+                }
             }
+            else if (directoryFileManager.Path.Length == 3 && musicPlayer.TrackPath.Length > 0) playingTrackFolderCursor = directoryFileManager.ArrayOfFolders.ToList().FindIndex(path => path == musicPlayer.TrackPath.Substring(0, 3));
+            else if (musicPlayer.TrackPath != "") playingTrackFolderCursor = 0;
+            if (playingTrackFolderCursor >= skipFoldersMultiplication && playingTrackFolderCursor <= skipFoldersMultiplication + heightOfWindow3_4_m12) playingTrackFolderCursor = playingTrackFolderCursor % heightOfWindow3_4_m12;
+            else if (playingTrackFolderCursor >= skipFoldersMultiplication) playingTrackFolderCursor = heightOfWindow3_4_m12;
+            else if (playingTrackFolderCursor <= skipFoldersMultiplication + heightOfWindow3_4_m12) playingTrackFolderCursor = -1;
+            else playingTrackFolderCursor = null;
+            UpdateConsoleBlockWithHighlights(1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, currentFolderIdx % heightOfWindow3_4_m12, playingTrackFolderCursor);
         }
-        else if (directoryFileManager.Path.Length == 3 && musicPlayer.TrackPath.Length > 0) playingTrackFolderCursor = directoryFileManager.ArrayOfFolders.ToList().FindIndex(path => path == musicPlayer.TrackPath.Substring(0, 3));
-        else if (musicPlayer.TrackPath != "") playingTrackFolderCursor = 0;
-        if(playingTrackFolderCursor >= skipFoldersMultiplication && playingTrackFolderCursor <= skipFoldersMultiplication + heightOfWindow3_4_m12) playingTrackFolderCursor = playingTrackFolderCursor % heightOfWindow3_4_m12;
-        else if(playingTrackFolderCursor >= skipFoldersMultiplication) playingTrackFolderCursor = heightOfWindow3_4_m12;
-        else if(playingTrackFolderCursor <= skipFoldersMultiplication + heightOfWindow3_4_m12) playingTrackFolderCursor = -1;
-        else playingTrackFolderCursor = null;
-        UpdateConsoleBlockWithHighlights(1, 9, widthOfWindow1_4_m2, heightOfWindow3_4_m10, currentFolderIdx % heightOfWindow3_4_m12, playingTrackFolderCursor);
+        catch (Exception) { }
     }
     public void UpdateFiles()
     {
-        int skipFilesMultiplication = cursorFileIdx / heightOfWindow3_4_m6 * heightOfWindow3_4_m6;
-        ListWriter(directoryFileManager.ArrayOfFiles.Skip(skipFilesMultiplication).Take(heightOfWindow3_4_m6).ToArray(), widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, false);
-        int? playingTrackFileCursor = null;
-        if (currentFileIdx >= skipFilesMultiplication && currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7) playingTrackFileCursor = currentFileIdx % heightOfWindow3_4_m6;
-        else if (currentFileIdx >= skipFilesMultiplication) playingTrackFileCursor = heightOfWindow3_4_m6;
-        else if (currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7 && currentFileIdx > 0) playingTrackFileCursor = -1;
-        else playingTrackFileCursor = null;
-        UpdateConsoleBlockWithHighlights(widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, cursorFileIdx % heightOfWindow3_4_m6, playingTrackFileCursor);
+        try
+        {
+            int skipFilesMultiplication = cursorFileIdx / heightOfWindow3_4_m6 * heightOfWindow3_4_m6;
+            ListWriter(directoryFileManager.ArrayOfFiles.Skip(skipFilesMultiplication).Take(heightOfWindow3_4_m6).ToArray(), widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, false);
+            int? playingTrackFileCursor = null;
+            if (currentFileIdx >= skipFilesMultiplication && currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7) playingTrackFileCursor = currentFileIdx % heightOfWindow3_4_m6;
+            else if (currentFileIdx >= skipFilesMultiplication) playingTrackFileCursor = heightOfWindow3_4_m6;
+            else if (currentFileIdx <= skipFilesMultiplication + heightOfWindow3_4_m7 && currentFileIdx > 0) playingTrackFileCursor = -1;
+            else playingTrackFileCursor = null;
+            UpdateConsoleBlockWithHighlights(widthOfWindow3_4_p1, 3, widthOfWindow1_4_m2, heightOfWindow3_4_m4, cursorFileIdx % heightOfWindow3_4_m6, playingTrackFileCursor);
+        }
+        catch (Exception) { }
     }
     private void UpdateVolume()
     {
