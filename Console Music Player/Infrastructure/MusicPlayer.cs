@@ -108,5 +108,8 @@ class MusicPlayer
         windowsMediaPlayerMain.controls.pause();
         musicConsole.nowPlaying = false;
         errorOccured = true;
+        musicConsole.UpdateFiles();
+        musicConsole.UpdateFolders();
+        musicConsole.UpdateTrack();
     }
 }
