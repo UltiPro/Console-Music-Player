@@ -35,11 +35,13 @@ class MusicPlayer
         windowsMediaPlayerMain.controls.stop();
         if (File.Exists(path))
         {
+            windowsMediaPlayerMain.close();
             windowsMediaPlayerMain.URL = musicConsole.DirectoryFileManager.Path + "\\" + path;
             RewindTrack(double.MinValue);
             windowsMediaPlayerMain.controls.play();
             musicConsole.nowPlaying = true;
             errorOccured = false;
+            GC.Collect();
         }
         else
         {
@@ -52,7 +54,6 @@ class MusicPlayer
                 {
                     musicConsole.currentFolderIdx = 0;
                     musicConsole.UpdatePath();
-                    musicConsole.UpdateFolders();
                 }
                 musicConsole.currentFileIdx = musicConsole.currentFileIdxMemory = -2;
                 if (musicConsole.DirectoryFileManager.CountOfFiles > 0) musicConsole.cursorFileIdx = 0;
@@ -65,6 +66,7 @@ class MusicPlayer
             }
         }
         musicConsole.UpdateFiles();
+        musicConsole.UpdateFolders();
         musicConsole.UpdateTrack();
     }
     public void Pause() => windowsMediaPlayerMain.controls.pause();
